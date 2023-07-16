@@ -1,16 +1,17 @@
 import { AccountId } from '@/lib/account/models/account'
+import Profile from '@/lib/account/models/profile'
 
 export type AudienceType = 'public' | 'member'
 
 export interface Room {
   id: number
-  owner: AccountId
-  sharingTo: AudienceType
+  ownerId: AccountId
+  visibility: AudienceType
   inviteCode?: string
   name: string
   slug: string
-  cover: string
   description?: string
+  cover: string
   audienceCount: number
   audiences: number[]
 }
@@ -21,3 +22,6 @@ export type RoomPublic = Pick<
 >
 
 export const getRoomURL = (room: Room | RoomPublic) => `/r/${room.slug}`
+
+export const isEditable = (room: Room, profile: Profile) =>
+  room.ownerId === profile.accountId

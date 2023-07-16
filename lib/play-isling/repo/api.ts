@@ -2,6 +2,7 @@ import axios from 'axios'
 import { CreateRoomDTO } from '../models/dto/room-dto'
 import { AxiosRes, transformError } from '@/lib/common/models/api-response'
 import { Room } from '../models/Room'
+import { Collection } from '@/lib/common/models/collections'
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL
 
@@ -12,4 +13,23 @@ export async function createRoom(createRoomDTO: CreateRoomDTO) {
     })
     .then((data) => data.data)
     .catch(transformError)
+}
+
+export async function getMyRooms() {
+  return axios
+    .get<unknown, AxiosRes<Collection<Room>>>('/play-isling/v1/rooms', {
+      baseURL: apiURL,
+    })
+    .then((data) => data.data)
+    .catch(transformError)
+}
+
+export function getRoom(slug: string) {
+  return () =>
+    axios
+      .get<unknown, AxiosRes<Room>>(`/play-isling/v1/rooms/${slug}`, {
+        baseURL: apiURL,
+      })
+      .then((data) => data.data)
+      .catch(transformError)
 }

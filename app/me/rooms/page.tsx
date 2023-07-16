@@ -9,7 +9,7 @@ import { Tooltip } from '@/components/atoms/tooltip'
 import PageHeader from '@/components/organisms/page-header'
 import RoomCard from '@/components/organisms/room/room-card'
 import HomeHeader from '@/components/templates/headers/HomeHeader'
-import { getRoomURL } from '@/lib/play-isling/models/Room'
+import { getRoomURL, isEditable } from '@/lib/play-isling/models/Room'
 import useMyRooms from '@/lib/play-isling/usecases/room/useMyRooms'
 import Link from 'next/link'
 import {
@@ -20,7 +20,8 @@ import {
 } from 'react-icons/io5'
 
 export default function MyRoomsPage() {
-  const { userProfile, myRooms, getShareableLinkHandler } = useMyRooms()
+  const { userProfile, myRooms, getShareableLinkHandler, isLoading } =
+    useMyRooms()
 
   if (!userProfile) {
     return (
@@ -36,6 +37,7 @@ export default function MyRoomsPage() {
       <header className="fixed h-12 lg:h-14 top-0 left-0 px-2 lg:px-6 w-full bg-primary z-40">
         <HomeHeader userProfile={userProfile} />
       </header>
+      {isLoading && <LoadingScreen />}
       <div className="h-12" />
       <div className="container-lg">
         <PageHeader
@@ -51,7 +53,7 @@ export default function MyRoomsPage() {
           }
         />
         <div className="space-y-8">
-          {myRooms.map((room) => (
+          {myRooms?.map((room) => (
             <div className="flex" key={room.id}>
               <RoomCard room={room} size="small" hideTitle />
               <div className="ml-4">
@@ -75,7 +77,7 @@ export default function MyRoomsPage() {
                   <Tooltip content="Edit room" side="bottom">
                     <IconButton
                       className="hover:bg-primary-light/40 active:bg-primary-light/70"
-                      disabled={room.owner !== userProfile.accountId}
+                      disabled={!isEditable(room, userProfile)}
                     >
                       <IoPencilOutline />
                     </IconButton>
@@ -83,7 +85,7 @@ export default function MyRoomsPage() {
                   <Tooltip content="Delete room" side="bottom">
                     <IconButton
                       className="hover:bg-primary-light/40 active:bg-primary-light/70"
-                      disabled={room.owner !== userProfile.accountId}
+                      disabled={!isEditable(room, userProfile)}
                     >
                       <IoTrashOutline />
                     </IconButton>

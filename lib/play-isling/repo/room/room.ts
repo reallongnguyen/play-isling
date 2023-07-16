@@ -4,8 +4,8 @@ const rooms: Record<string, Room> = {
   'btc-studio': {
     id: 1,
     name: 'BTC Studio',
-    owner: 1,
-    sharingTo: 'public',
+    ownerId: 1,
+    visibility: 'public',
     audienceCount: 0,
     audiences: [],
     cover:
@@ -16,8 +16,8 @@ const rooms: Record<string, Room> = {
   isling: {
     id: 2,
     name: 'isling',
-    owner: 2,
-    sharingTo: 'public',
+    ownerId: 2,
+    visibility: 'public',
     audienceCount: 0,
     audiences: [],
     cover:
@@ -28,8 +28,8 @@ const rooms: Record<string, Room> = {
   chill: {
     id: 3,
     name: 'Chill',
-    owner: 3,
-    sharingTo: 'public',
+    ownerId: 3,
+    visibility: 'public',
     audienceCount: 0,
     audiences: [],
     cover:
@@ -40,8 +40,8 @@ const rooms: Record<string, Room> = {
   sleep: {
     id: 4,
     name: 'Sleep',
-    owner: 1,
-    sharingTo: 'member',
+    ownerId: 1,
+    visibility: 'member',
     audienceCount: 0,
     audiences: [],
     cover:
@@ -52,8 +52,8 @@ const rooms: Record<string, Room> = {
   'pub-music': {
     id: 5,
     name: 'Pub Bar Music',
-    owner: 2,
-    sharingTo: 'member',
+    ownerId: 2,
+    visibility: 'member',
     audienceCount: 0,
     audiences: [],
     cover:
@@ -64,8 +64,8 @@ const rooms: Record<string, Room> = {
   baroque: {
     id: 6,
     name: 'Baroque',
-    owner: 1,
-    sharingTo: 'public',
+    ownerId: 1,
+    visibility: 'public',
     audienceCount: 0,
     audiences: [],
     cover:
