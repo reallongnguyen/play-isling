@@ -40,8 +40,9 @@ export default function EditProfilePage() {
       <header className="fixed h-12 lg:h-14 top-0 left-0 px-2 lg:px-6 w-full bg-primary z-40">
         <HomeHeader userProfile={userProfile} />
       </header>
+      <div className="h-12" />
       <div className="container-md">
-        <div className="mt-20">
+        <div className="mt-8">
           <UserCard profile={userProfile} />
           <Separator className="mt-6" />
         </div>
@@ -192,6 +193,7 @@ export default function EditProfilePage() {
           </div>
         </form>
       </div>
+      <div className="h-28" />
     </>
   )
 }

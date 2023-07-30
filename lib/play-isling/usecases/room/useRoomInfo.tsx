@@ -15,8 +15,6 @@ export function useRoomInfo(slug: string) {
       >(['myRooms'])
       const room = myRoomRes?.data.edges.find((r) => r.slug === slug)
 
-      console.log('room in cache', room)
-
       return room ? { data: room } : undefined
     },
   })

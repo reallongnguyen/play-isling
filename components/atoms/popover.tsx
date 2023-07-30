@@ -4,6 +4,9 @@ import * as React from 'react'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 
 import { cn } from '@/lib/utils'
+import { Alert, AlertDescription, AlertTitle } from './alert'
+import { AlertTriangle } from 'lucide-react'
+import { Button } from './button'
 
 const Popover = PopoverPrimitive.Root
 
@@ -29,3 +32,58 @@ const PopoverContent = React.forwardRef<
 PopoverContent.displayName = PopoverPrimitive.Content.displayName
 
 export { Popover, PopoverTrigger, PopoverContent }
+
+export interface ConfirmationProps {
+  title: string
+  description?: string
+  disabled?: boolean
+  onYes?: () => void
+  onNo?: () => void
+}
+
+export function Confirmation(
+  props: React.PropsWithChildren<ConfirmationProps>
+) {
+  const [open, setOpen] = React.useState(false)
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger disabled={props.disabled}>
+        {props.children}
+      </PopoverTrigger>
+      <PopoverContent className="p-0" side="top">
+        <Alert variant="default" className="border-0">
+          <AlertTriangle className="w-4 h-4" />
+          <AlertTitle>{props.title}</AlertTitle>
+          {props.description && (
+            <AlertDescription>{props.description}</AlertDescription>
+          )}
+          <div className="flex space-x-2">
+            <Button
+              variant="destructive"
+              size="sm"
+              className="px-4 mt-2"
+              onClick={props.onYes}
+            >
+              Yes
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="px-4 mt-2"
+              onClick={() => {
+                if (props.onNo) {
+                  props.onNo()
+                }
+
+                setOpen(false)
+              }}
+            >
+              No
+            </Button>
+          </div>
+        </Alert>
+      </PopoverContent>
+    </Popover>
+  )
+}

@@ -33,3 +33,12 @@ export function getRoom(slug: string) {
       .then((data) => data.data)
       .catch(transformError)
 }
+
+export function deleteRoom(id: number) {
+  return axios
+    .delete<unknown, AxiosRes<Room>>(`/play-isling/v1/rooms/${id}`, {
+      baseURL: apiURL,
+    })
+    .then((data) => data.data)
+    .catch(transformError)
+}
