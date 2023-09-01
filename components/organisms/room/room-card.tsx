@@ -1,11 +1,11 @@
-import { Room, getRoomURL } from '@/lib/play-isling/models/Room'
+import { RoomPublic, getRoomURL } from '@/lib/play-isling/models/Room'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 import { HTMLProps, memo } from 'react'
 
 export class RoomCardProps implements Omit<HTMLProps<HTMLDivElement>, 'size'> {
-  room!: Room
+  room!: RoomPublic
   className?: string
   size?: 'large' | 'medium' | 'small'
   hideTitle? = false

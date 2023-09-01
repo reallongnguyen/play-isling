@@ -18,7 +18,14 @@ export interface Room {
 
 export type RoomPublic = Pick<
   Room,
-  'id' | 'name' | 'slug' | 'cover' | 'description'
+  | 'id'
+  | 'name'
+  | 'slug'
+  | 'cover'
+  | 'description'
+  | 'visibility'
+  | 'audienceCount'
+  | 'audiences'
 >
 
 export const getRoomURL = (room: Room | RoomPublic) => `/r/${room.slug}`

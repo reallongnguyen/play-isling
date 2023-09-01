@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 
 import { getTokenByPassword } from './repo/api'
 import { SignInRequest, TokenResponse } from './models/dto'
-import ApiResponse from '../common/models/api-response'
+import { ErrorResponse, SuccessResponse } from '../common/models/api-response'
 import { getToken, setToken } from './repo/token'
 import { toast } from '@/components/atoms/use-toast'
 import { useForm } from 'react-hook-form'
@@ -14,8 +14,8 @@ export default function useSignIn() {
   const router = useRouter()
 
   const { mutate: signIn, isPending } = useMutation<
-    ApiResponse<TokenResponse>,
-    ApiResponse,
+    SuccessResponse<TokenResponse>,
+    ErrorResponse,
     SignInRequest
   >({
     mutationFn: getTokenByPassword,

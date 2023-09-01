@@ -22,8 +22,8 @@ export default function useMyRooms() {
     refetch: refetchRooms,
   } = useQuery({
     queryFn: getMyRooms,
-    queryKey: ['myRooms'],
-    initialData: queryClient.getQueryData(['myRooms']),
+    queryKey: ['myRooms', userProfile?.accountId],
+    initialData: queryClient.getQueryData(['myRooms', userProfile?.accountId]),
   })
   const { mutate: deleteRoomMutate, isPending: isDeleting } = useMutation({
     mutationFn: deleteRoom,
