@@ -12,6 +12,8 @@ import {
   LoadingHeader,
   LoadingScreen,
 } from '@/components/atoms/loading-skeleton'
+import { useRoomInfo } from '@/lib/play-isling/usecases/room/useRoomInfo'
+import useTrackingRoom from '@/lib/play-isling/usecases/useTrackingRoom'
 
 const listReaction: ReactionType[] = [
   'haha',
@@ -28,12 +30,18 @@ function Page({ params }: { params: Record<string, string> }) {
   const router = useRouter()
   const pathName = usePathname()
 
-  const roomId = (params.id as string) || 'isling'
+  const roomSlug = (params.id as string) || 'isling'
+  const { room } = useRoomInfo(roomSlug)
+  const { trackAction } = useTrackingRoom(room?.id)
 
-  const playerRepo = useMemo(() => new PlayerStateRepository(roomId), [roomId])
+  const playerRepo = useMemo(
+    () => new PlayerStateRepository(roomSlug),
+    [roomSlug]
+  )
 
   const handleReaction = (type: ReactionType) => () => {
     playerRepo.reaction(type)
+    trackAction({ type: 'reaction', objectId: String(room?.id) })
   }
 
   useEffect(() => {

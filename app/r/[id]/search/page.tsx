@@ -13,6 +13,8 @@ import { YouTubeVideo } from '@/models/youtube/YoutubeVideo'
 import { searchQueryStore } from '@/stores/search'
 import useAccount from '@/lib/account/useAccount'
 import { newUser } from '@/models/user/User'
+import { useRoomInfo } from '@/lib/play-isling/usecases/room/useRoomInfo'
+import useTrackingRoom from '@/lib/play-isling/usecases/useTrackingRoom'
 
 const youtubeVideoURLRegex =
   /^(?:(?:https:\/\/)?(?:www.)?youtube.com\/watch\?v=(.*?)(?=&|$).*)|(?:(?:https:\/\/)?(?:.*?)\/(.*?)$)/
@@ -23,9 +25,14 @@ const Page = ({ params }: { params: Record<string, string> }) => {
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryStore)
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([])
 
-  const roomId = (params?.id as string) || 'isling'
+  const roomSlug = (params?.id as string) || 'isling'
+  const { room } = useRoomInfo(roomSlug)
+  const { trackAction } = useTrackingRoom(room?.id)
 
-  const playlistRepo = useMemo(() => new PlaylistRepository(roomId), [roomId])
+  const playlistRepo = useMemo(
+    () => new PlaylistRepository(roomSlug),
+    [roomSlug]
+  )
 
   const searchVideo = async (query: string) => {
     if (query === '') {
@@ -54,11 +61,15 @@ const Page = ({ params }: { params: Record<string, string> }) => {
   const addSongRequest = (youtubeSong: Song) => async () => {
     const songRequest = newSongRequest(
       youtubeSong,
-      newUser(`${userProfile?.id || 0}`, userProfile?.fullName || 'Anonymous')
+      newUser(
+        `${userProfile?.accountId || 0}`,
+        userProfile?.firstName || 'Anonymous'
+      )
     )
     const newPlaylist = pushSongRequest(playlist, songRequest)
     console.log(newPlaylist)
     await playlistRepo.setPlaylist(newPlaylist)
+    trackAction({ type: 'add-item', objectId: String(room?.id) })
   }
 
   useEffect(() => {
