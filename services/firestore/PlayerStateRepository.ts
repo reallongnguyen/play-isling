@@ -19,11 +19,15 @@ export type SnapshotControllerHandler = (state: PlayerState) => void
 export type SnapshotReactionHandler = (id: string, type: ReactionType) => void
 
 class PlayerStateRepository {
-  baseURL = 'rezik'
+  baseURL = 'play-isling'
+  roomId = 'isling'
   controllerCollection: CollectionReference
   reactionCollection: CollectionReference
 
-  constructor(private roomId: string) {
+  constructor(roomSlug: string) {
+    const slugPieces = roomSlug.split('-')
+    this.roomId = slugPieces[slugPieces.length - 1]
+
     this.controllerCollection = collection(
       doc(collection(getFirestore(), this.baseURL), this.roomId),
       'playerStates'

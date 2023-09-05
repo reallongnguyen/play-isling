@@ -17,6 +17,11 @@ export default function useTrackingRoom(roomId?: number) {
       return
     }
 
+    mutate({
+      type: 'read',
+      objectId: String(roomId),
+    })
+
     const id = setInterval(() => {
       if (
         Date.now() - joinedAt.current >= 3 * 60000 &&

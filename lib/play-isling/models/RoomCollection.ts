@@ -1,7 +1,7 @@
 import { RoomPublic } from './Room'
 
 export interface RoomCollection {
-  id: number
+  id: string
   name: string
   rooms: RoomPublic[]
 }

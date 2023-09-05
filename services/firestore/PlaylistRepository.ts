@@ -15,10 +15,14 @@ import { unescape } from '../../lib/common/string'
 export type SnapshotPlaylistHandler = (playlist?: Playlist) => void
 
 class PlaylistRepository {
-  baseURL = 'rezik'
+  baseURL = 'play-isling'
+  roomId = 'isling'
   playlistCollection: CollectionReference
 
-  constructor(private roomId: string) {
+  constructor(roomSlug: string) {
+    const slugPieces = roomSlug.split('-')
+    this.roomId = slugPieces[slugPieces.length - 1]
+
     this.playlistCollection = collection(
       doc(collection(getFirestore(), this.baseURL), this.roomId),
       'playlists'

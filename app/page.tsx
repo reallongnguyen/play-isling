@@ -16,8 +16,6 @@ import useHome from '@/lib/play-isling/usecases/home/useHome'
 function Page() {
   const { userProfile, isLoading, homeData } = useHome()
 
-  console.log(homeData)
-
   return (
     <>
       {isLoading && <LoadingHeader />}
@@ -29,8 +27,8 @@ function Page() {
           <HomeHeader userProfile={userProfile} />
         )}
       </header>
-      <div className="h-28" />
-      <div className="mx-32">
+      <div className="h-48" />
+      <div className="mx-40">
         <Roll
           title={
             <div className="flex pb-2">
@@ -52,17 +50,33 @@ function Page() {
                     : 'GUEST'}
                 </div>
                 <div className="text-3xl font-semibold">
-                  {homeData?.forYou.name}
+                  {homeData?.collections[0].name}
                 </div>
               </div>
             </div>
           }
         >
-          {homeData?.forYou.rooms.map((room) => (
+          {homeData?.collections[0].rooms.map((room) => (
             <RoomCard room={room} key={room.id} />
           ))}
         </Roll>
       </div>
+      {homeData?.collections.slice(1).map((collection) => (
+        <div className="mx-40 mt-24" key={collection.id}>
+          <Roll
+            title={
+              <div className="flex pb-2">
+                <div className="text-3xl font-semibold">{collection.name}</div>
+              </div>
+            }
+          >
+            {collection.rooms.map((room) => (
+              <RoomCard room={room} key={room.id} />
+            ))}
+          </Roll>
+        </div>
+      ))}
+      <div className="h-24" />
     </>
   )
 }
