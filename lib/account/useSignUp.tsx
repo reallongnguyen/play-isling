@@ -5,7 +5,7 @@ import { toast } from '@/components/atoms/use-toast'
 
 import { signUpAccount } from './repo/api'
 import { SignUpDTO, SignUpRequest, TokenResponse } from './models/dto'
-import ApiResponse, { ErrorResponse } from '../common/models/api-response'
+import { ErrorResponse, SuccessResponse } from '../common/models/api-response'
 import { getToken, setToken } from './repo/token'
 import { useForm } from 'react-hook-form'
 
@@ -14,7 +14,7 @@ export default function useSignUp() {
   const router = useRouter()
 
   const { mutate: signUp, isPending } = useMutation<
-    ApiResponse<TokenResponse>,
+    SuccessResponse<TokenResponse>,
     ErrorResponse,
     SignUpRequest
   >({

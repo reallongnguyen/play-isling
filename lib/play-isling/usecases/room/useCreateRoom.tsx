@@ -13,7 +13,7 @@ import {
 } from '@/lib/common/models/api-response'
 
 export default function useCreateRoom() {
-  const { userProfile } = useAccount()
+  const { userProfile } = useAccount({ mustLogin: true })
   const createRoomForm = useForm<CreateRoomDTO>()
   const router = useRouter()
 

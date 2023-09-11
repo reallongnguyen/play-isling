@@ -7,5 +7,8 @@ export const toRoomPublic = (room: Room): RoomPublic => {
     slug: room.slug,
     cover: room.cover,
     description: room.description,
+    visibility: room.visibility,
+    audienceCount: room.audienceCount,
+    audiences: room.audiences,
   }
 }

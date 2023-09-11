@@ -1,12 +1,12 @@
 import { AccountId } from '@/lib/account/models/account'
 import Profile from '@/lib/account/models/profile'
 
-export type AudienceType = 'public' | 'member'
+export type VisibilityType = 'public' | 'member'
 
 export interface Room {
   id: number
   ownerId: AccountId
-  visibility: AudienceType
+  visibility: VisibilityType
   inviteCode?: string
   name: string
   slug: string

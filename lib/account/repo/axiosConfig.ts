@@ -1,11 +1,14 @@
 import axios, { AxiosError } from 'axios'
-import ApiResponse, { ErrorResponse } from '@/lib/common/models/api-response'
+import {
+  ErrorResponse,
+  SuccessResponse,
+} from '@/lib/common/models/api-response'
 import { TokenResponse } from '../models/dto'
 import { getToken, setToken } from './token'
 import { getTokenByRefreshToken } from './api'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
-let renewAccessToken: Promise<ApiResponse<TokenResponse>> | undefined
+let renewAccessToken: Promise<SuccessResponse<TokenResponse>> | undefined
 
 function getAuthorizationString(token: TokenResponse) {
   const tokenType = `${token.tokenType[0].toUpperCase()}${token.tokenType.slice(

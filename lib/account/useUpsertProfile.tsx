@@ -10,7 +10,7 @@ import {
   UpdateProfileRequest,
   toUpdateProfileRequest,
 } from './models/dto'
-import ApiResponse, { ErrorResponse } from '../common/models/api-response'
+import { ErrorResponse, SuccessResponse } from '../common/models/api-response'
 import { useForm } from 'react-hook-form'
 import Profile from './models/profile'
 import useAccount from './useAccount'
@@ -27,7 +27,7 @@ export default function useUpsertProfile() {
   const editProfileForm = useForm<UpdateProfileDTO>()
 
   const { mutate: upsertProfileMutate, isPending } = useMutation<
-    ApiResponse<Profile>,
+    SuccessResponse<Profile>,
     ErrorResponse,
     UpdateProfileRequest
   >({
