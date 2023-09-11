@@ -1,5 +1,5 @@
 'use client'
-import { IoPersonOutline } from 'react-icons/io5'
+import { IoHeart, IoPersonOutline } from 'react-icons/io5'
 import { getAvatarString } from '@/lib/common/user'
 import Roll from '@com/organisms/Roll'
 import HomeHeader from '@/components/templates/headers/HomeHeader'
@@ -28,39 +28,49 @@ function Page() {
         )}
       </header>
       <div className="h-48" />
-      <div className="mx-40">
-        <Roll
-          title={
-            <div className="flex pb-2">
-              <Avatar className="w-16 h-16">
-                <AvatarFallback>
-                  {!userProfile ? (
-                    <IoPersonOutline className="text-2xl" />
-                  ) : (
-                    <div className="text-2xl">
-                      {getAvatarString(getDisplayName(userProfile))}
-                    </div>
-                  )}
-                </AvatarFallback>
-              </Avatar>
-              <div className="ml-4 h-full flex flex-col justify-between">
-                <div className="text-secondary/60 leading-none font-light">
-                  {userProfile
-                    ? getDisplayName(userProfile).toUpperCase()
-                    : 'GUEST'}
-                </div>
-                <div className="text-3xl font-semibold">
-                  {homeData?.collections[0].name}
+      {!homeData?.collections[0] && (
+        <div className="flex flex-col items-center">
+          <IoHeart className="text-4xl animate-pulse text-rose-400" />
+          <div className="text-center text-xl mt-6">
+            Party-Rooms will appear here
+          </div>
+        </div>
+      )}
+      {homeData?.collections[0] && (
+        <div className="mx-40">
+          <Roll
+            title={
+              <div className="flex pb-2">
+                <Avatar className="w-16 h-16">
+                  <AvatarFallback>
+                    {!userProfile ? (
+                      <IoPersonOutline className="text-2xl" />
+                    ) : (
+                      <div className="text-2xl">
+                        {getAvatarString(getDisplayName(userProfile))}
+                      </div>
+                    )}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="ml-4 h-full flex flex-col justify-between">
+                  <div className="text-secondary/60 leading-none font-light">
+                    {userProfile
+                      ? getDisplayName(userProfile).toUpperCase()
+                      : 'GUEST'}
+                  </div>
+                  <div className="text-3xl font-semibold">
+                    {homeData?.collections[0].name}
+                  </div>
                 </div>
               </div>
-            </div>
-          }
-        >
-          {homeData?.collections[0].rooms.map((room) => (
-            <RoomCard room={room} key={room.id} />
-          ))}
-        </Roll>
-      </div>
+            }
+          >
+            {homeData?.collections[0].rooms.map((room) => (
+              <RoomCard room={room} key={room.id} />
+            ))}
+          </Roll>
+        </div>
+      )}
       {homeData?.collections.slice(1).map((collection) => (
         <div className="mx-40 mt-24" key={collection.id}>
           <Roll
