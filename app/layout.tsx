@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 import '@/styles/globals.css'
 import { Toaster } from '@/components/atoms/toaster'
 import GlobalDialog from '@/components/organisms/GlobalDialog'
-import { VideoPlayerOptimized } from '@/components/templates/video-player/lazy'
+import VideoPlayer from '@/components/templates/video-player'
 
 import Providers from './providers'
 
@@ -35,7 +35,7 @@ export default function RootLayout({ children }: PropsWithChildren<unknown>) {
         <Providers>
           <GlobalDialog />
           <Toaster />
-          <VideoPlayerOptimized />
+          <VideoPlayer />
           <main>{children}</main>
         </Providers>
       </body>
