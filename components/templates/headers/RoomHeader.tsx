@@ -1,6 +1,11 @@
 'use client'
 import { FC, useEffect, useRef, useState } from 'react'
-import { IoChevronBack, IoClose, IoTvOutline } from 'react-icons/io5'
+import {
+  IoChevronBack,
+  IoClose,
+  IoVolumeHigh,
+  IoVolumeMute,
+} from 'react-icons/io5'
 import { getAvatarString } from '@/lib/common/user'
 import Link from 'next/link'
 import { useRecoilState } from 'recoil'
@@ -15,6 +20,8 @@ import { Avatar, AvatarFallback } from '@/components/atoms/avatar'
 import IconButton from '../../atoms/buttons/IconButton'
 import { UserDropdownContent } from './UserDropdownContent'
 import Profile, { getDisplayName } from '@/lib/account/models/profile'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { Button } from '@/components/atoms/button'
 
 export interface RoomHeaderProps {
   room?: Room
@@ -38,6 +45,10 @@ const RoomHeader: FC<RoomHeaderProps> = ({
   const timeout = useRef<any>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const shouldFocusSearchInputOnMounted = useRef(true)
+  const searchParam = useSearchParams()
+  const router = useRouter()
+  const path = usePathname()
+  const mode = searchParam.get('mode') || 'master'
 
   const handleChangeKeyword = (value: string) => {
     setKeyword(value)
@@ -55,6 +66,22 @@ const RoomHeader: FC<RoomHeaderProps> = ({
   const handleClearKeyword = () => {
     setKeyword('')
     searchInputRef.current?.focus()
+  }
+
+  const changeRoomMode = () => {
+    const newMode = mode !== 'slave' ? 'slave' : 'master'
+    let queries = searchParam.toString()
+    queries = queries.replace(/&?mode=\w+(?=&|$)/, '')
+
+    if (newMode !== 'master') {
+      if (queries != '') {
+        queries += '&'
+      }
+
+      queries += `mode=${newMode}`
+    }
+
+    router.replace(`${path}?${queries}`)
   }
 
   useEffect(() => {
@@ -95,12 +122,33 @@ const RoomHeader: FC<RoomHeaderProps> = ({
             </Link>
           )}
           {isShowRoom && (
-            <div className="max-w-[192px] flex items-center bg-primary-light rounded px-3 h-8">
-              <IoTvOutline className="text-lg text-secondary/80" />
-              <div className="truncate text-ellipsis ml-2 font-light text-secondary/90 text-sm">
-                {room?.name}
-              </div>
-            </div>
+            <Button
+              variant="default"
+              className={`
+                max-w-[192px] h-8
+                ${mode === 'slave' ? 'bg-orange-900' : 'bg-sky-900'}
+              `}
+              onClick={changeRoomMode}
+            >
+              {mode === 'slave' ? (
+                <IoVolumeMute className="text-lg text-secondary/80 mr-2" />
+              ) : (
+                <IoVolumeHigh className="text-lg text-secondary/80 mr-2" />
+              )}
+              {room?.name}
+            </Button>
+            // <div
+            // className={`
+            //   max-w-[192px] flex items-center rounded px-3 h-8
+            //   ${mode === 'slave' ? 'bg-orange-900' : 'bg-sky-900'}
+            // `}
+            //   onClick={changeRoomMode}
+            // >
+
+            //   <div className="truncate text-ellipsis ml-2 font-light text-secondary/90 text-sm">
+            //     {room?.name}
+            //   </div>
+            // </div>
           )}
         </div>
         <div className="flex items-center h-full space-x-3 lg:space-x-6">

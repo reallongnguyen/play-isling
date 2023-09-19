@@ -15,6 +15,7 @@ import PlayerStateRepository, {
 } from '@/services/firestore/PlayerStateRepository'
 import { playlistStore } from '@/stores/playlist'
 import ReactionPool from '@com/templates/ReactionPool'
+import Image from 'next/image'
 
 const youtubeVideoBaseUrl = 'https://www.youtube.com/watch?v='
 const initialPos = {
@@ -41,6 +42,7 @@ function VideoPlayer() {
   const roomId = shouldShowPlayer ? (params?.id as string) : undefined
   const isLivingRoom = pathName === `/r/${params?.id}`
   const isLightMode = !!searchParam.get('lightMode')
+  const mode = searchParam.get('mode') || 'master'
   const isMounted = useRef(true)
 
   const playerRepo = useMemo(() => {
@@ -232,7 +234,7 @@ function VideoPlayer() {
     <>
       <ReactionPool elementRef={playerRef} />
       <animated.div ref={playerRef} style={playerProps}>
-        {curSongReq && (
+        {curSongReq && mode !== 'slave' && (
           <ReactPlayer
             ref={player}
             url={youtubeVideoBaseUrl + curSongReq.song.id}
@@ -247,6 +249,15 @@ function VideoPlayer() {
             height="100%"
             light={isLightMode}
           />
+        )}
+        {curSongReq && mode === 'slave' && (
+          <div className="w-full h-full object-cover">
+            <Image
+              src={curSongReq.song.thumbnail}
+              alt={curSongReq.song.title}
+              fill
+            />
+          </div>
         )}
       </animated.div>
     </>
