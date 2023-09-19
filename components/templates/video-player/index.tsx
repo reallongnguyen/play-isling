@@ -1,5 +1,13 @@
 'use client'
 
-import VideoPlayer from './VideoPlayer'
+import { usePathname } from 'next/navigation'
+import { lazy } from 'react'
 
-export default VideoPlayer
+const VideoPlayer = lazy(() => import('./VideoPlayer'))
+
+export default function VideoPlayerLazy() {
+  const pathName = usePathname()
+  const shouldShowPlayer = pathName?.startsWith('/r/')
+
+  return !shouldShowPlayer ? <></> : <VideoPlayer />
+}

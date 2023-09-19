@@ -41,6 +41,7 @@ function VideoPlayer() {
   const roomId = shouldShowPlayer ? (params?.id as string) : undefined
   const isLivingRoom = pathName === `/r/${params?.id}`
   const isLightMode = !!searchParam.get('lightMode')
+  const isMounted = useRef(true)
 
   const playerRepo = useMemo(() => {
     if (typeof roomId === 'undefined') {
@@ -147,7 +148,9 @@ function VideoPlayer() {
   }, [playerRepo])
 
   useEffect(() => {
-    if (isLivingRoom) {
+    if (isMounted.current && isLivingRoom) {
+      isMounted.current = false
+
       // set video player position
       const id = setInterval(() => {
         const videoPlaceholder = document.getElementById('video-placeholder')
@@ -166,7 +169,9 @@ function VideoPlayer() {
           false
         )
       }, 50)
+    }
 
+    if (isLivingRoom) {
       document.onscroll = () => {
         clonePositionAndClass(
           playerRef.current,
