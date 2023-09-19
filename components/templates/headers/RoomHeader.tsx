@@ -125,30 +125,22 @@ const RoomHeader: FC<RoomHeaderProps> = ({
             <Button
               variant="default"
               className={`
-                max-w-[192px] h-8
+                h-8
                 ${mode === 'slave' ? 'bg-orange-900' : 'bg-sky-900'}
               `}
               onClick={changeRoomMode}
             >
-              {mode === 'slave' ? (
-                <IoVolumeMute className="text-lg text-secondary/80 mr-2" />
-              ) : (
-                <IoVolumeHigh className="text-lg text-secondary/80 mr-2" />
-              )}
-              {room?.name}
+              <div className="flex items-center">
+                {mode === 'slave' ? (
+                  <IoVolumeMute className="text-lg text-secondary/80 mr-2" />
+                ) : (
+                  <IoVolumeHigh className="text-lg text-secondary/80 mr-2" />
+                )}
+                <div className="max-w-[80px] lg:max-w-[130px] truncate">
+                  {room?.name}
+                </div>
+              </div>
             </Button>
-            // <div
-            // className={`
-            //   max-w-[192px] flex items-center rounded px-3 h-8
-            //   ${mode === 'slave' ? 'bg-orange-900' : 'bg-sky-900'}
-            // `}
-            //   onClick={changeRoomMode}
-            // >
-
-            //   <div className="truncate text-ellipsis ml-2 font-light text-secondary/90 text-sm">
-            //     {room?.name}
-            //   </div>
-            // </div>
           )}
         </div>
         <div className="flex items-center h-full space-x-3 lg:space-x-6">
