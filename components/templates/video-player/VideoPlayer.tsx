@@ -234,7 +234,7 @@ function VideoPlayer() {
     <>
       <ReactionPool elementRef={playerRef} />
       <animated.div ref={playerRef} style={playerProps}>
-        {curSongReq && mode !== 'slave' && (
+        {curSongReq && mode !== 'silent' && (
           <ReactPlayer
             ref={player}
             url={youtubeVideoBaseUrl + curSongReq.song.id}
@@ -250,9 +250,10 @@ function VideoPlayer() {
             light={isLightMode}
           />
         )}
-        {curSongReq && mode === 'slave' && (
+        {curSongReq && mode === 'silent' && (
           <div className="w-full h-full object-scale-down">
             <Image
+              className="scale-[1.4]"
               src={curSongReq.song.thumbnail}
               alt={curSongReq.song.title}
               fill

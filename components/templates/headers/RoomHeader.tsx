@@ -69,7 +69,7 @@ const RoomHeader: FC<RoomHeaderProps> = ({
   }
 
   const changeRoomMode = () => {
-    const newMode = mode !== 'slave' ? 'slave' : 'master'
+    const newMode = mode !== 'silent' ? 'silent' : 'master'
     let queries = searchParam.toString()
     queries = queries.replace(/&?mode=\w+(?=&|$)/, '')
 
@@ -126,12 +126,12 @@ const RoomHeader: FC<RoomHeaderProps> = ({
               variant="default"
               className={`
                 h-8
-                ${mode === 'slave' ? 'bg-orange-900' : 'bg-sky-900'}
+                ${mode === 'silent' ? 'bg-orange-900' : 'bg-sky-900'}
               `}
               onClick={changeRoomMode}
             >
               <div className="flex items-center">
-                {mode === 'slave' ? (
+                {mode === 'silent' ? (
                   <IoVolumeMute className="text-lg text-secondary/80 mr-2" />
                 ) : (
                   <IoVolumeHigh className="text-lg text-secondary/80 mr-2" />
