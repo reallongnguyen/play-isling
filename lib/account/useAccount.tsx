@@ -59,7 +59,8 @@ export default function useAccount(orgProps: UseAccountProps) {
       userProfileRes.data &&
       !userProfileRes.data.firstName
     ) {
-      router.push('/me/profile/edit')
+      const nextStep = '/all-done'
+      router.push(`/me/profile/edit?next=${nextStep}`)
     }
   }, [router, userProfileRes])
 

@@ -15,8 +15,13 @@ import { useForm } from 'react-hook-form'
 import Profile from './models/profile'
 import useAccount from './useAccount'
 import dayjs from 'dayjs'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function useUpsertProfile() {
+  const router = useRouter()
+  const query = useSearchParams()
+  const nextStep = query.get('next')
+
   const {
     userProfile,
     isLoading: isLoadingAuth,
@@ -32,11 +37,16 @@ export default function useUpsertProfile() {
     UpdateProfileRequest
   >({
     mutationFn: upsertUserProfile,
-    onSuccess: () => {
-      refetchProfile()
-      toast({
-        title: 'Update profile successfully',
-      })
+    onSuccess: async () => {
+      await refetchProfile()
+
+      if (nextStep != null && nextStep != '') {
+        router.push(nextStep)
+      } else {
+        toast({
+          title: 'Update profile successfully',
+        })
+      }
     },
     onError: (error) => {
       const errorMessage = error.errors[0]

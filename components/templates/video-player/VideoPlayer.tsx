@@ -251,7 +251,7 @@ function VideoPlayer() {
           />
         )}
         {curSongReq && mode === 'slave' && (
-          <div className="w-full h-full object-cover">
+          <div className="w-full h-full object-scale-down">
             <Image
               src={curSongReq.song.thumbnail}
               alt={curSongReq.song.title}

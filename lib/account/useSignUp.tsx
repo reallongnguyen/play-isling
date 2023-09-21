@@ -21,7 +21,9 @@ export default function useSignUp() {
     mutationFn: signUpAccount,
     onSuccess: (resData) => {
       setToken(resData.data)
-      router.push('/me/profile/edit')
+
+      const nextStep = '/all-done'
+      router.push(`/me/profile/edit?next=${nextStep}`)
     },
     onError: (error) => {
       let errorMessage = error.errors[0]
