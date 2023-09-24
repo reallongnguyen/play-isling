@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useMemo } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useRecoilValue } from 'recoil'
 import { searchQueryStore } from '@/stores/search'
 import ReactionIcon from '@com/atoms/ReactionIcon'
@@ -14,6 +14,8 @@ import {
 } from '@/components/atoms/loading-skeleton'
 import { useRoomInfo } from '@/lib/play-isling/usecases/room/useRoomInfo'
 import useTrackingRoom from '@/lib/play-isling/usecases/useTrackingRoom'
+import { Avatar, AvatarFallback } from '@/components/atoms/avatar'
+import { getAvatarString } from '@/lib/common/user'
 
 const listReaction: ReactionType[] = [
   'haha',
@@ -31,8 +33,10 @@ function Page({ params }: { params: Record<string, string> }) {
   const pathName = usePathname()
 
   const roomSlug = (params.id as string) || 'isling'
-  const { room } = useRoomInfo(roomSlug)
+  const { room, audiences } = useRoomInfo(roomSlug)
   const { trackAction } = useTrackingRoom(room?.id)
+  const query = useSearchParams()
+  const mode = query.get('mode') || 'master'
 
   const playerRepo = useMemo(
     () => new PlayerStateRepository(roomSlug),
@@ -46,9 +50,11 @@ function Page({ params }: { params: Record<string, string> }) {
 
   useEffect(() => {
     if (searchQuery !== '') {
-      router.push(`${pathName}/search`)
+      const queryString = query.toString()
+
+      router.push(`${pathName}/search${queryString ? `?${queryString}` : ''}`)
     }
-  }, [searchQuery, router, pathName])
+  }, [searchQuery, router, pathName, query])
 
   return (
     <>
@@ -57,30 +63,59 @@ function Page({ params }: { params: Record<string, string> }) {
       <div className="pl-6 pr-[29rem]">
         <div className="lg:h-[4.5rem]" />
         <div
-          id="video-placeholder"
-          className="overflow-hidden lg:rounded-sm aspect-[3/2] lg:aspect-video lg:w-full"
-        />
-        <div className="text-xl text-secondary mt-3">
-          {curSongReq?.song.title}
+          className={`${
+            mode === 'silent' ? 'grid grid-cols-3 gap-12 mb-10' : ''
+          }`}
+        >
+          <div
+            id="video-placeholder"
+            className="overflow-hidden lg:rounded-sm aspect-[3/2] lg:aspect-video lg:w-full"
+          />
+          <div
+            className={`
+              ${mode === 'silent' ? 'col-span-2' : 'grid grid-cols-[1fr_auto]'}
+              text-secondary
+            `}
+          >
+            <div className="mt-3 flex space-x-4">
+              <div className="text-xl text-secondary">
+                {curSongReq?.song.title}
+              </div>
+            </div>
+            <div className="flex space-x-4 items-center h-12">
+              {listReaction.map((type) => (
+                <div
+                  key={type}
+                  onClick={handleReaction(type as ReactionType)}
+                  className="w-8 h-8 cursor-pointer hover:w-12 hover:h-12 transition-all duration-700 group"
+                >
+                  <ReactionIcon
+                    type={type as ReactionType}
+                    className="group-active:scale-110 transition-all duration-100"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="grid grid-cols-[1fr_auto] text-secondary h-16 mb-6">
-          <div className="mt-6 flex space-x-4" />
-          <div className="flex space-x-4 items-center">
-            {listReaction.map((type) => (
-              <div
-                key={type}
-                onClick={handleReaction(type as ReactionType)}
-                className="w-12 h-12 cursor-pointer hover:w-16 hover:h-16 transition-all duration-700 group"
-              >
-                <ReactionIcon
-                  type={type as ReactionType}
-                  className="group-active:scale-110 transition-all duration-100"
-                />
+        {audiences.length > 0 && (
+          <div className="grid grid-cols-5 lg:grid-cols-8 gap-4 mt-8">
+            {audiences.map((user) => (
+              <div key={user.id} className="flex flex-col items-center">
+                <Avatar className="w-16 h-16">
+                  <AvatarFallback className="text-xl">
+                    {getAvatarString(user.firstName)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="mt-2 text-sm font-semibold">
+                  {user.firstName}
+                </div>
               </div>
             ))}
           </div>
-        </div>
+        )}
       </div>
+      <div className="h-24" />
     </>
   )
 }

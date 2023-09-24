@@ -186,6 +186,27 @@ function VideoPlayer() {
     }
   }, [clonePositionAndClass, playerCtrl, isLivingRoom])
 
+  useEffect(() => {
+    // set video player position
+    const id = setInterval(() => {
+      const videoPlaceholder = document.getElementById('video-placeholder')
+
+      if (!videoPlaceholder) {
+        return
+      }
+
+      clearInterval(id)
+
+      clonePositionAndClass(
+        playerRef.current,
+        'video-placeholder',
+        playerCtrl,
+        'fixed overflow-hidden w-full group',
+        false
+      )
+    }, 50)
+  }, [clonePositionAndClass, mode, playerCtrl])
+
   const videoPlaceholderSizeChange: ResizeObserverCallback = useCallback(() => {
     clonePositionAndClass(
       playerRef.current,

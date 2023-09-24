@@ -28,7 +28,8 @@ export type RoomPublic = Pick<
   | 'audiences'
 >
 
-export const getRoomURL = (room: Room | RoomPublic) => `/r/${room.slug}`
+export const getRoomURL = (room: Room | RoomPublic, query: string) =>
+  `/r/${room.slug}${query ? `?${query}` : ''}`
 
 export const isEditable = (room: Room, profile: Profile) =>
   room.ownerId === profile.accountId
