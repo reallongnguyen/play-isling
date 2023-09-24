@@ -20,10 +20,6 @@ const init = async () => {
       pass: surrealPass,
     })
 
-    window.onbeforeunload = () => {
-      db.close().then(() => console.log('disconnect surreal'))
-    }
-
     console.log('surreal: initial success')
   } catch (err) {
     console.error('surreal: initial:', (err as Error).message)
