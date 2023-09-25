@@ -32,11 +32,9 @@ const signin = async () => {
           typeof window !== 'undefined' &&
           localStorage.getItem('surreal_session')
 
-        if (!token) {
-          return
-        }
-
         try {
+          if (!token) throw new Error('throw error to go to signin scope')
+
           await db.authenticate(token)
 
           connected = true
