@@ -36,28 +36,24 @@ const signin = async () => {
           return
         }
 
-        const ok = await db.authenticate(token)
+        try {
+          await db.authenticate(token)
 
-        if (ok) {
           connected = true
           console.log('surreal: login by token success')
-        }
-
-        if (!ok) {
+        } catch (err) {
           localStorage.removeItem('surreal_session')
 
-          await db
-            .signin({
-              user: surrealUser,
-              pass: surrealPass,
-            })
-            .then((token) => {
-              if (!token) throw new Error('surreal: did not receive token')
-              localStorage.setItem('surreal_session', token)
+          const newToken = await db.signin({
+            user: surrealUser,
+            pass: surrealPass,
+          })
 
-              connected = true
-              console.log('surreal: login by password success')
-            })
+          if (!newToken) throw new Error('surreal: did not receive token')
+          localStorage.setItem('surreal_session', newToken)
+
+          connected = true
+          console.log('surreal: login by password success')
         }
       } catch (err) {
         console.error('surreal: initial:', (err as Error).message)
