@@ -33,7 +33,7 @@ function Page({ params }: { params: Record<string, string> }) {
   const pathName = usePathname()
 
   const roomSlug = (params.id as string) || 'isling'
-  const { room, audiences } = useRoomInfo(roomSlug)
+  const { room, audiences } = useRoomInfo(roomSlug, true)
   const { trackAction } = useTrackingRoom(room?.id)
   const query = useSearchParams()
   const mode = query.get('mode') || 'master'

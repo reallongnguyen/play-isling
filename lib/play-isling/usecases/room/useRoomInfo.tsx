@@ -4,7 +4,7 @@ import { SuccessResponse } from '@/lib/common/models/api-response'
 import { Collection } from '@/lib/common/models/collections'
 import { Room } from '../../models/Room'
 import { useEffect, useMemo, useState } from 'react'
-import { db } from '@/lib/common/repo/surreal/initial'
+import { db, waitSurreal } from '@/lib/common/repo/surreal/initial'
 import useAccount from '@/lib/account/useAccount'
 import { SimpleUser } from '../../models/User'
 
@@ -38,18 +38,18 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
     return Object.values(userSet) as SimpleUser[]
   }, [audienceMap])
 
-  useEffect(() => console.log(audiences), [audiences])
+  useEffect(() => console.log('audiences', audiences), [audiences])
 
-  // join room
+  // watch audience's list
   useEffect(() => {
     if (!userProfile) {
       return
     }
 
-    let shouldClearZombie = false
+    let shouldClearJoinRoomBackgroundJob = false
 
     let leaveRoom = () => {
-      shouldClearZombie = true
+      shouldClearJoinRoomBackgroundJob = true
     }
 
     const joinRoom = async () => {
@@ -71,22 +71,9 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
         db.delete(joinId).then(() => console.log('leaveRoom', joinId))
       }
 
-      if (shouldClearZombie) {
+      if (shouldClearJoinRoomBackgroundJob) {
         leaveRoom()
       }
-    }
-
-    joinRoom()
-
-    return () => {
-      leaveRoom()
-    }
-  }, [userProfile, roomUID])
-
-  // watch audience's list
-  useEffect(() => {
-    if (!shouldListenAudience) {
-      return
     }
 
     interface QueryResult {
@@ -105,8 +92,6 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
     })
 
     const liveCallback = (data: any) => {
-      console.log(data)
-
       switch (data.action) {
         case 'CREATE':
           const newRow = data.result as unknown as QueryResult
@@ -137,13 +122,17 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
       }
     }
 
-    let shouldClearZombie = false
+    let shouldClearListenRoomBackgroundJob = false
 
     let killLive = () => {
-      shouldClearZombie = true
+      shouldClearListenRoomBackgroundJob = true
     }
 
     const listenRoom = async () => {
+      if (!shouldListenAudience) {
+        return
+      }
+
       const res = await db.query(
         `live select id, <-users.* as users from join where out = "media_rooms:${roomUID}" and time::now() - time.pinged < 2m`
       )
@@ -156,20 +145,24 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
         db.kill(queryId).then(() => console.log('kill live query', queryId))
       }
 
-      if (shouldClearZombie) {
+      if (shouldClearListenRoomBackgroundJob) {
         killLive()
       }
     }
 
     const getAudiences = async () => {
+      if (!shouldListenAudience) {
+        return
+      }
+
       const res = await db.query(
         `select id, <-users.* as users from join where out = "media_rooms:${roomUID}" and time::now() - time.pinged < 2m`
       )
 
       if (res[0] && Array.isArray(res[0].result)) {
         const audienceMapAtNow = res[0].result
-          .map((qr: any) => qr as unknown as QueryResult)
-          .reduce((pv: any, v: any) => {
+          .map((qr) => qr as unknown as QueryResult)
+          .reduce((pv, v) => {
             if (v.users.length === 0) {
               return pv
             }
@@ -184,12 +177,16 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
       }
     }
 
-    listenRoom().then(() => getAudiences())
+    waitSurreal()
+      .then(() => joinRoom())
+      .then(() => listenRoom())
+      .then(() => getAudiences())
 
     return () => {
+      leaveRoom()
       killLive()
     }
-  }, [roomUID, shouldListenAudience])
+  }, [roomUID, shouldListenAudience, userProfile])
 
   return {
     room: roomRes?.data,

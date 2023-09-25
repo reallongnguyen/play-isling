@@ -202,7 +202,7 @@ function VideoPlayer() {
         'video-placeholder',
         playerCtrl,
         'fixed overflow-hidden w-full group',
-        false
+        true
       )
     }, 50)
   }, [clonePositionAndClass, mode, playerCtrl])

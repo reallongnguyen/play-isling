@@ -4681,6 +4681,14 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
+surrealdb.js@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/surrealdb.js/-/surrealdb.js-0.9.0.tgz#e26ee17738bc3bdb0522f75f6b301ef69550bcee"
+  integrity sha512-JV1lSzeSF4GftfxSvrOd0fDAw0AwRTSTsn+smp4BzhVuvcfJH/2zceEMwsMLzQcUao386pq4xk5JKoieayFJqQ==
+  dependencies:
+    unws "^0.2.3"
+    ws "^8.13.0"
+
 synckit@^0.8.5:
   version "0.8.5"
   resolved "https://registry.npmjs.org/synckit/-/synckit-0.8.5.tgz"
@@ -4859,6 +4867,11 @@ untildify@^4.0.0:
   resolved "https://registry.npmjs.org/untildify/-/untildify-4.0.0.tgz"
   integrity sha512-KK8xQ1mkzZeg9inewmFVDNkg3l5LUhoq9kN6iWYB/CC9YMG8HA+c1Q8HwDe6dEX7kErrEVNVBO3fWsVq5iDgtw==
 
+unws@^0.2.3:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/unws/-/unws-0.2.4.tgz#cb6f27a98a7fab4bf1c2f842648f9a2fc8be80f2"
+  integrity sha512-/N1ajiqrSp0A/26/LBg7r10fOcPtGXCqJRJ61sijUFoGZMr6ESWGYn7i0cwr7fR7eEECY5HsitqtjGHDZLAu2w==
+
 update-browserslist-db@^1.0.10:
   version "1.0.11"
   resolved "https://registry.npmjs.org/update-browserslist-db/-/update-browserslist-db-1.0.11.tgz"
@@ -5007,6 +5020,11 @@ ws@^7.5.5:
   version "7.5.9"
   resolved "https://registry.npmjs.org/ws/-/ws-7.5.9.tgz"
   integrity sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==
+
+ws@^8.13.0:
+  version "8.14.2"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-8.14.2.tgz#6c249a806eb2db7a20d26d51e7709eab7b2e6c7f"
+  integrity sha512-wEBG1ftX4jcglPxgFCMJmZ2PLtSbJ2Peg6TmpJFTbe9GZYOQCDPdMYu/Tm0/bGZkw8paZnJY45J4K2PZrLYq8g==
 
 xtend@^4.0.2:
   version "4.0.2"
