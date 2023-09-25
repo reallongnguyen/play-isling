@@ -7,7 +7,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { db } from '@/lib/common/repo/surreal/initial'
 import useAccount from '@/lib/account/useAccount'
 import { SimpleUser } from '../../models/User'
-import { LiveQueryResponse } from 'surrealdb.js/script/types'
 
 export function useRoomInfo(slug: string, shouldListenAudience = false) {
   const queryClient = useQueryClient()
@@ -105,9 +104,7 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
       lastName: qru.last_name,
     })
 
-    const liveCallback = (
-      data: LiveQueryResponse<Record<string, QueryResult | string>>
-    ) => {
+    const liveCallback = (data: any) => {
       console.log(data)
 
       switch (data.action) {
@@ -171,8 +168,8 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
 
       if (res[0] && Array.isArray(res[0].result)) {
         const audienceMapAtNow = res[0].result
-          .map((qr) => qr as unknown as QueryResult)
-          .reduce((pv, v) => {
+          .map((qr: any) => qr as unknown as QueryResult)
+          .reduce((pv: any, v: any) => {
             if (v.users.length === 0) {
               return pv
             }
