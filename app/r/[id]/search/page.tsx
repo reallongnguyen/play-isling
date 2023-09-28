@@ -17,7 +17,7 @@ import { useRoomInfo } from '@/lib/play-isling/usecases/room/useRoomInfo'
 import useTrackingRoom from '@/lib/play-isling/usecases/useTrackingRoom'
 
 const youtubeVideoURLRegex =
-  /^(?:(?:https:\/\/)?(?:www.)?youtube.com\/watch\?v=(.*?)(?=&|$).*)|(?:(?:https:\/\/)?(?:.*?)\/(.*?)$)/
+  /^(?:(?:https:\/\/)?(?:www.)?youtube.com\/watch\?v=(.*?)(?=&|$).*)|(?:(?:https:\/\/)?(?:.*?)\/(.*?)(?=[?#]|$))/
 
 const Page = ({ params }: { params: Record<string, string> }) => {
   const playlist = useRecoilValue(playlistStore)

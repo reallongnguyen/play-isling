@@ -21,6 +21,6 @@ export const truncateWithEllipsis = (str: string, len: number) => {
   return str
     .slice(0, len)
     .trim()
-    .replace(/[^A-Za-zÀ-ӿ0-9]$/gm, '')
+    .replace(/[^\p{L}\d]+$/gmu, '')
     .concat('...')
 }

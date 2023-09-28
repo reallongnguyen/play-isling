@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { db, waitSurreal } from '@/lib/common/repo/surreal/initial'
 import useAccount from '@/lib/account/useAccount'
 import { SimpleUser } from '../../models/User'
+import { LiveQueryResponse } from 'surrealdb.js/script/types'
 
 export function useRoomInfo(slug: string, shouldListenAudience = false) {
   const queryClient = useQueryClient()
@@ -38,8 +39,9 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
     return Object.values(userSet) as SimpleUser[]
   }, [audienceMap])
 
-  useEffect(() => console.log('audiences', audiences), [audiences])
+  useEffect(() => console.log('audiences change', audiences), [audiences])
 
+  // TODO: write joinRoom(), listenRoom(), getAudiences() at repository layer
   // watch audience's list
   useEffect(() => {
     if (!userProfile) {
@@ -78,24 +80,25 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
 
     interface QueryResult {
       id: string
-      users: { id: string; first_name: string; last_name?: string }[]
+      users: { id: string; firstName: string; lastName?: string }[]
     }
 
     const convQRUtoSimpUser = (qru: {
       id: string
-      first_name: string
-      last_name?: string
+      firstName: string
+      lastName?: string
     }): SimpleUser => ({
       id: qru.id,
-      firstName: qru.first_name,
-      lastName: qru.last_name,
+      firstName: qru.firstName,
+      lastName: qru.lastName,
     })
 
-    const liveCallback = (data: any) => {
+    const liveCallback = (
+      data: LiveQueryResponse<Record<string, QueryResult | string>>
+    ) => {
       switch (data.action) {
         case 'CREATE':
           const newRow = data.result as unknown as QueryResult
-          console.log(newRow)
 
           if (newRow.users.length === 0) {
             return
@@ -134,7 +137,7 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
       }
 
       const res = await db.query(
-        `live select id, <-users.* as users from join where out = "media_rooms:${roomUID}" and time::now() - time.pinged < 2m`
+        `live select id, <-users.* as users from join where out = "media_rooms:${roomUID}"`
       )
 
       const queryId = res[0].result as string
