@@ -20,7 +20,7 @@ export default interface Profile extends Naming {
 
 export function getDisplayName(profile: Naming) {
   if (profile.firstName && profile.lastName) {
-    return `${profile.lastName} ${profile.firstName}`
+    return `${profile.firstName} ${profile.lastName}`
   }
 
   if (profile.firstName) {
