@@ -5,16 +5,20 @@ export enum Gender {
   unknown,
 }
 
-export default interface Profile {
-  accountId: number
-  email: string
+export interface Naming {
   firstName?: string
   lastName?: string
-  gender?: Gender
-  dateOfBirth?: Date
 }
 
-export function getDisplayName(profile: Profile) {
+export default interface Profile extends Naming {
+  accountId: number
+  email: string
+  gender?: Gender
+  dateOfBirth?: Date
+  avatarUrl?: string
+}
+
+export function getDisplayName(profile: Naming) {
   if (profile.firstName && profile.lastName) {
     return `${profile.lastName} ${profile.firstName}`
   }
@@ -23,5 +27,5 @@ export function getDisplayName(profile: Profile) {
     return profile.firstName
   }
 
-  return profile.email
+  return ''
 }

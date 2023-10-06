@@ -3,7 +3,7 @@ import { IoHeart, IoPersonOutline } from 'react-icons/io5'
 import { getAvatarString } from '@/lib/common/user'
 import Roll from '@com/organisms/Roll'
 import HomeHeader from '@/components/templates/headers/HomeHeader'
-import { Avatar, AvatarFallback } from '@/components/atoms/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/avatar'
 import HomeHeaderForGuest from '@/components/templates/headers/HomeHeaderForGuest'
 import {
   LoadingHeader,
@@ -41,17 +41,22 @@ function Page() {
           <Roll
             title={
               <div className="flex pb-2">
-                <Avatar className="w-16 h-16">
-                  <AvatarFallback>
-                    {!userProfile ? (
+                {!userProfile ? (
+                  <Avatar className="w-16 h-16">
+                    <AvatarFallback>
                       <IoPersonOutline className="text-2xl" />
-                    ) : (
+                    </AvatarFallback>
+                  </Avatar>
+                ) : (
+                  <Avatar className="w-16 h-16">
+                    <AvatarImage src={userProfile.avatarUrl} />
+                    <AvatarFallback>
                       <div className="text-2xl">
                         {getAvatarString(getDisplayName(userProfile))}
                       </div>
-                    )}
-                  </AvatarFallback>
-                </Avatar>
+                    </AvatarFallback>
+                  </Avatar>
+                )}
                 <div className="ml-4 h-full flex flex-col justify-between">
                   <div className="text-secondary/60 leading-none font-light">
                     {userProfile

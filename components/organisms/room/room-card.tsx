@@ -1,3 +1,7 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/avatar'
+import { Tooltip } from '@/components/atoms/tooltip'
+import { getDisplayName } from '@/lib/account/models/profile'
+import { getAvatarString } from '@/lib/common/user'
 import { RoomPublic, getRoomURL } from '@/lib/play-isling/models/Room'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
@@ -51,16 +55,31 @@ function RoomCard({
         </div>
       </Link>
       {!hideTitle && (
-        <>
-          <div className="mt-4">
-            <Link href={getRoomURL(room)}>{room.name}</Link>
-          </div>
-          {room.description && (
-            <div className="text-secondary/40 font-light mt-2">
-              {room.description}
-            </div>
+        <div className="flex space-x-3 mt-4 items-start">
+          {room.owner && (
+            <Tooltip content={getDisplayName(room.owner)}>
+              <Avatar>
+                <AvatarImage
+                  src={room.owner.avatarUrl}
+                  className="bg-primary-light"
+                />
+                <AvatarFallback>
+                  {getAvatarString(getDisplayName(room.owner))}
+                </AvatarFallback>
+              </Avatar>
+            </Tooltip>
           )}
-        </>
+          <div>
+            <div className="text-xl">
+              <Link href={getRoomURL(room)}>{room.name}</Link>
+            </div>
+            {room.description && (
+              <div className="text-secondary/40 font-light mt-1">
+                {room.description}
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   )

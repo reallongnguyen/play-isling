@@ -1,11 +1,19 @@
 import { AccountId } from '@/lib/account/models/account'
-import Profile from '@/lib/account/models/profile'
+import Profile, { Naming } from '@/lib/account/models/profile'
 
 export type VisibilityType = 'public' | 'member'
+
+export interface RoomOwner extends Naming {
+  id: number
+  firstName?: string
+  lastName?: string
+  avatarUrl?: string
+}
 
 export interface Room {
   id: number
   ownerId: AccountId
+  owner?: RoomOwner
   visibility: VisibilityType
   inviteCode?: string
   name: string
@@ -26,6 +34,7 @@ export type RoomPublic = Pick<
   | 'visibility'
   | 'audienceCount'
   | 'audiences'
+  | 'owner'
 >
 
 export const getRoomURL = (room: Room | RoomPublic, query = '') =>

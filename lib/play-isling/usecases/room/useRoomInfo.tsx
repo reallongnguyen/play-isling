@@ -78,24 +78,30 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
       }
     }
 
-    interface QueryResult {
-      id: string
-      users: { id: string; firstName: string; lastName?: string }[]
-    }
-
-    const convQRUtoSimpUser = (qru: {
+    interface SUser {
       id: string
       firstName: string
       lastName?: string
-    }): SimpleUser => ({
+      avatarUrl?: string
+    }
+
+    interface QueryResult {
+      id: string
+      users: SUser[]
+    }
+
+    const convQRUtoSimpUser = (qru: SUser): SimpleUser => ({
       id: qru.id,
       firstName: qru.firstName,
       lastName: qru.lastName,
+      avatarUrl: qru.avatarUrl,
     })
 
     const liveCallback = (
       data: LiveQueryResponse<Record<string, QueryResult | string>>
     ) => {
+      console.debug('audience live data', data)
+
       switch (data.action) {
         case 'CREATE':
           const newRow = data.result as unknown as QueryResult
@@ -169,6 +175,8 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
             if (v.users.length === 0) {
               return pv
             }
+
+            console.debug('list audience data', v.users[0])
 
             return {
               ...pv,

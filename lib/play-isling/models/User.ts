@@ -1,5 +1,6 @@
-export interface SimpleUser {
+import { Naming } from '@/lib/account/models/profile'
+
+export interface SimpleUser extends Naming {
   id: string
-  firstName?: string
-  lastName?: string
+  avatarUrl?: string
 }

@@ -8,7 +8,7 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
 } from '@/components/atoms/dropdown-menu'
-import { Avatar, AvatarFallback } from '@/components/atoms/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/avatar'
 import { IslingLogo } from '@/components/atoms/logo'
 import Profile, { getDisplayName } from '@/lib/account/models/profile'
 import { usePathname } from 'next/navigation'
@@ -46,6 +46,7 @@ const HomeHeader: FC<HeaderProps> = ({ userProfile }) => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="cursor-pointer">
+                <AvatarImage src={userProfile.avatarUrl} />
                 <AvatarFallback>
                   <div className="text-sm">
                     {getAvatarString(getDisplayName(userProfile))}

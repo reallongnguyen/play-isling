@@ -14,8 +14,9 @@ import {
 } from '@/components/atoms/loading-skeleton'
 import { useRoomInfo } from '@/lib/play-isling/usecases/room/useRoomInfo'
 import useTrackingRoom from '@/lib/play-isling/usecases/useTrackingRoom'
-import { Avatar, AvatarFallback } from '@/components/atoms/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/avatar'
 import { getAvatarString } from '@/lib/common/user'
+import { getDisplayName } from '@/lib/account/models/profile'
 
 const listReaction: ReactionType[] = [
   'haha',
@@ -103,12 +104,13 @@ function Page({ params }: { params: Record<string, string> }) {
             {audiences.map((user) => (
               <div key={user.id} className="flex flex-col items-center">
                 <Avatar className="w-16 h-16">
+                  <AvatarImage src={user.avatarUrl} />
                   <AvatarFallback className="text-xl">
-                    {getAvatarString(user.firstName)}
+                    {getAvatarString(getDisplayName(user))}
                   </AvatarFallback>
                 </Avatar>
                 <div className="mt-2 text-sm font-semibold">
-                  {user.firstName}
+                  {getDisplayName(user)}
                 </div>
               </div>
             ))}

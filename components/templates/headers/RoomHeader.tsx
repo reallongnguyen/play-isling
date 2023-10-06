@@ -15,7 +15,7 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
 } from '@/components/atoms/dropdown-menu'
-import { Avatar, AvatarFallback } from '@/components/atoms/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/avatar'
 
 import IconButton from '../../atoms/buttons/IconButton'
 import { UserDropdownContent } from './UserDropdownContent'
@@ -147,6 +147,7 @@ const RoomHeader: FC<RoomHeaderProps> = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="cursor-pointer">
+                <AvatarImage src={userProfile.avatarUrl} />
                 <AvatarFallback>
                   <div className="text-sm">
                     {getAvatarString(getDisplayName(userProfile))}
