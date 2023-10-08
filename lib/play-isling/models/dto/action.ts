@@ -1,4 +1,5 @@
 export interface CreateAction {
-  type: string
-  objectId?: string
+  eventName: string
+  data: any
+  app?: string
 }

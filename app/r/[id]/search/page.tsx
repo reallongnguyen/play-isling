@@ -27,7 +27,7 @@ const Page = ({ params }: { params: Record<string, string> }) => {
 
   const roomSlug = (params?.id as string) || 'isling'
   const { room } = useRoomInfo(roomSlug)
-  const { trackAction } = useTrackingRoom(room?.id)
+  const { logUserActivity } = useTrackingRoom(room?.id)
 
   const playlistRepo = useMemo(
     () => new PlaylistRepository(roomSlug),
@@ -69,7 +69,10 @@ const Page = ({ params }: { params: Record<string, string> }) => {
     const newPlaylist = pushSongRequest(playlist, songRequest)
     console.log(newPlaylist)
     await playlistRepo.setPlaylist(newPlaylist)
-    trackAction({ type: 'add-item', objectId: String(room?.id) })
+    logUserActivity({
+      eventName: 'add-item',
+      data: { itemId: String(room?.id) },
+    })
   }
 
   useEffect(() => {

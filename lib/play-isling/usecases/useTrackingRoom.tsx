@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query'
-import { addAction } from '../repo/api'
+import { createUserActivity } from '../repo/api'
 import { useEffect, useRef } from 'react'
 
 export default function useTrackingRoom(roomId?: number) {
   const joinedAt = useRef(Date.now())
   const { mutate } = useMutation({
-    mutationFn: addAction,
+    mutationFn: createUserActivity,
   })
 
   useEffect(() => {
@@ -18,38 +18,36 @@ export default function useTrackingRoom(roomId?: number) {
     }
 
     mutate({
-      type: 'read',
-      objectId: String(roomId),
+      eventName: 'read',
+      data: {
+        itemId: String(roomId),
+      },
     })
 
     const id = setInterval(() => {
+      // send watch-15min if user stay in room on 10 minus
       if (
-        Date.now() - joinedAt.current >= 3 * 60000 &&
-        Date.now() - joinedAt.current < 4 * 60000
+        Date.now() - joinedAt.current >= 10 * 60000 &&
+        Date.now() - joinedAt.current < 11 * 60000
       ) {
         mutate({
-          type: 'watch-3min',
-          objectId: String(roomId),
+          eventName: 'watch-15min',
+          data: {
+            itemId: String(roomId),
+          },
         })
       }
 
+      // send watch-1h if user stay in room on 30 minus
       if (
-        Date.now() - joinedAt.current >= 15 * 60000 &&
-        Date.now() - joinedAt.current < 16 * 60000
+        Date.now() - joinedAt.current >= 30 * 60000 &&
+        Date.now() - joinedAt.current < 31 * 60000
       ) {
         mutate({
-          type: 'watch-15min',
-          objectId: String(roomId),
-        })
-      }
-
-      if (
-        Date.now() - joinedAt.current >= 60 * 60000 &&
-        Date.now() - joinedAt.current < 61 * 60000
-      ) {
-        mutate({
-          type: 'watch-1h',
-          objectId: String(roomId),
+          eventName: 'watch-1h',
+          data: {
+            itemId: String(roomId),
+          },
         })
       }
     }, 60000)
@@ -60,6 +58,6 @@ export default function useTrackingRoom(roomId?: number) {
   }, [mutate, roomId])
 
   return {
-    trackAction: mutate,
+    logUserActivity: mutate,
   }
 }

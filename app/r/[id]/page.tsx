@@ -35,7 +35,7 @@ function Page({ params }: { params: Record<string, string> }) {
 
   const roomSlug = (params.id as string) || 'isling'
   const { room, audiences } = useRoomInfo(roomSlug, true)
-  const { trackAction } = useTrackingRoom(room?.id)
+  const { logUserActivity } = useTrackingRoom(room?.id)
   const query = useSearchParams()
   const mode = query.get('mode') || 'master'
 
@@ -46,7 +46,10 @@ function Page({ params }: { params: Record<string, string> }) {
 
   const handleReaction = (type: ReactionType) => () => {
     playerRepo.reaction(type)
-    trackAction({ type: 'reaction', objectId: String(room?.id) })
+    logUserActivity({
+      eventName: 'reaction',
+      data: { itemId: String(room?.id) },
+    })
   }
 
   useEffect(() => {

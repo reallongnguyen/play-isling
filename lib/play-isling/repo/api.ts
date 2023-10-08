@@ -63,11 +63,15 @@ export async function getHomeGuest() {
     .catch(transformError)
 }
 
-export async function addAction(action: CreateAction) {
+export async function createUserActivity(action: CreateAction) {
   return axios
-    .post('/play-isling/v1/actions', action, {
-      baseURL: apiURL,
-    })
+    .post(
+      '/v1/tracking/user-activities',
+      { ...action, app: action.app || 'play' },
+      {
+        baseURL: apiURL,
+      }
+    )
     .then((data) => data.data)
     .catch(transformError)
 }
