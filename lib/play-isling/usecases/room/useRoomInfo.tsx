@@ -4,7 +4,7 @@ import { SuccessResponse } from '@/lib/common/models/api-response'
 import { Collection } from '@/lib/common/models/collections'
 import { Room } from '../../models/Room'
 import { useEffect, useMemo, useState } from 'react'
-import { db, waitSurreal } from '@/lib/common/repo/surreal/initial'
+import { surreal } from '@/lib/common/repo/surreal'
 import useAccount from '@/lib/account/useAccount'
 import { SimpleUser } from '../../models/User'
 import { LiveQueryResponse } from 'surrealdb.js/script/types'
@@ -26,6 +26,7 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
   const roomUID = slug.split('-').reverse()[0]
   const { userProfile } = useAccount({ mustLogin: false })
   const [audienceMap, setAudienceMap] = useState<Record<string, SimpleUser>>({})
+  const [surrealReconnectSignal, setSurrealReconnectSignal] = useState(0)
 
   const audiences = useMemo(() => {
     const userSet = Object.values(audienceMap).reduce(
@@ -57,7 +58,7 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
     const joinRoom = async () => {
       const query = `relate users:${userProfile.accountId}->join->media_rooms:${roomUID} set time.joined = time::now(), time.pinged = time::now()`
 
-      const res = await db.query(query)
+      const res = await surreal.getConn().query(query)
 
       const joinId = (res as any)[0].result[0].id
 
@@ -65,12 +66,15 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
       const updatePingQuery = `update ${joinId} set time.pinged = time::now()`
 
       const updatePingId = setInterval(() => {
-        db.query(updatePingQuery)
+        surreal.getConn().query(updatePingQuery)
       }, 1000 * 90)
 
       leaveRoom = () => {
         clearInterval(updatePingId)
-        db.delete(joinId).then(() => console.log('leaveRoom', joinId))
+        surreal
+          .getConn()
+          .delete(joinId)
+          .then(() => console.log('leaveRoom', joinId))
       }
 
       if (shouldClearJoinRoomBackgroundJob) {
@@ -142,16 +146,21 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
         return
       }
 
-      const res = await db.query(
-        `live select id, <-users.* as users from join where out = "media_rooms:${roomUID}"`
-      )
+      const res = await surreal
+        .getConn()
+        .query(
+          `live select id, <-users.* as users from join where out = "media_rooms:${roomUID}"`
+        )
 
       const queryId = res[0].result as string
 
-      await db.listenLive(queryId, liveCallback)
+      await surreal.getConn().listenLive(queryId, liveCallback)
 
       killLive = () => {
-        db.kill(queryId).then(() => console.log('kill live query', queryId))
+        surreal
+          .getConn()
+          .kill(queryId)
+          .then(() => console.log('kill live query', queryId))
       }
 
       if (shouldClearListenRoomBackgroundJob) {
@@ -164,9 +173,11 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
         return
       }
 
-      const res = await db.query(
-        `select id, <-users.* as users from join where out = "media_rooms:${roomUID}" and time::now() - time.pinged < 2m`
-      )
+      const res = await surreal
+        .getConn()
+        .query(
+          `select id, <-users.* as users from join where out = "media_rooms:${roomUID}" and time::now() - time.pinged < 2m`
+        )
 
       if (res[0] && Array.isArray(res[0].result)) {
         const audienceMapAtNow = res[0].result
@@ -188,7 +199,8 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
       }
     }
 
-    waitSurreal()
+    surreal
+      .waitConnected()
       .then(() => joinRoom())
       .then(() => listenRoom())
       .then(() => getAudiences())
@@ -197,7 +209,13 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
       leaveRoom()
       killLive()
     }
-  }, [roomUID, shouldListenAudience, userProfile])
+  }, [roomUID, shouldListenAudience, userProfile, surrealReconnectSignal])
+
+  useEffect(() => {
+    surreal.event.on('reconnected', () => {
+      setSurrealReconnectSignal((val) => val + 1)
+    })
+  }, [])
 
   return {
     room: roomRes?.data,

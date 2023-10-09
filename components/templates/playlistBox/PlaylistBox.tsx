@@ -41,13 +41,13 @@ const defaultSongReq = newSongRequest(
 )
 
 export interface PlaylistBoxProps {
-  onSongReqChange?: (songReq: SongRequest) => void
+  noticeSongReqChange?: (songReq: SongRequest) => void
   musicControllerOptions?: MusicControllerOptions
   hasMiniPlayer?: boolean
 }
 
 const PlaylistBox: FC<PlaylistBoxProps> = ({
-  onSongReqChange,
+  noticeSongReqChange,
   musicControllerOptions,
   hasMiniPlayer = false,
 }) => {
@@ -163,6 +163,8 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
     setSongCardHeight(songCardRef.current.clientHeight + 12)
   }, [playlist.list.length])
 
+  // on the songs in playlist is changed
+  // or player state (current song) is changed
   useEffect(() => {
     // do nothing if both playlist and playerState have not loaded
     if (!loadPlaylistFirstTimeDone.current || !syncFirstTimeDone.current) {
@@ -175,7 +177,13 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
       return
     }
 
-    if (playerState?.endOfList && playlist.list.length > songReqTotal.current) {
+    // incase the playlist at the end and a new song is added
+    // need check songReqTotal.current !== 0 to sure it is not in situation at component did mount
+    if (
+      playerState?.endOfList &&
+      songReqTotal.current !== 0 &&
+      playlist.list.length > songReqTotal.current
+    ) {
       songReqIndex.current = songReqTotal.current
     } else {
       const curSongReqIdx = playlist.list.findIndex(
@@ -203,11 +211,12 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
     })
   }, [playerState?.endOfList, playerState?.requestId, playlist, setCurSongReq])
 
+  // notice the Video player to play the new song
   useEffect(() => {
-    if (onSongReqChange && curSongReq) {
-      onSongReqChange(curSongReq)
+    if (noticeSongReqChange && curSongReq) {
+      noticeSongReqChange(curSongReq)
     }
-  }, [curSongReq, onSongReqChange])
+  }, [curSongReq, noticeSongReqChange])
 
   useEffect(() => {
     shadowPlayerState.current = playerState
@@ -234,6 +243,7 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
     }
   }, [curSongReq, playerRepo])
 
+  // scroll playlist to the position of current song req when it's has changed
   useEffect(() => {
     // prevent auto scroll when user are reacting with playlist
     if (isMouseEnterPlaylist.current || !curSongReq) {
@@ -264,6 +274,7 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
     })
   }, [curSongReq])
 
+  // subscribe playlist
   useEffect(() => {
     const unsubPlaylist = playlistRepo.onSnapshotPlaylist((playlist) => {
       loadPlaylistFirstTimeDone.current = true
@@ -283,6 +294,7 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
     }
   }, [playlistRepo, setPlaylist])
 
+  // subscribe player state
   useEffect(() => {
     if (!isSync) {
       return
@@ -306,6 +318,7 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
     }
   }, [isSync, playerRepo])
 
+  // listen event from Video player
   useEffect(() => {
     playerEvent.on('ended', handleVideoEndOrError)
     playerEvent.on('error', handleVideoEndOrError)

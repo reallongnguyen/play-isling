@@ -1,5 +1,5 @@
 'use client'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, KeyboardEventHandler, useEffect, useRef, useState } from 'react'
 import {
   IoChevronBack,
   IoClose,
@@ -60,7 +60,19 @@ const RoomHeader: FC<RoomHeaderProps> = ({
     timeout.current = setTimeout(function () {
       setSearchQuery(value)
       timeout.current = undefined
-    }, 666)
+    }, 500)
+  }
+
+  const handleKeyPressOnSearch: KeyboardEventHandler<HTMLInputElement> = (
+    event
+  ) => {
+    if (event.key === 'Enter') {
+      if (timeout.current) {
+        clearTimeout(timeout.current)
+      }
+
+      setSearchQuery(keyword)
+    }
   }
 
   const handleClearKeyword = () => {
@@ -101,6 +113,7 @@ const RoomHeader: FC<RoomHeaderProps> = ({
             placeholder="Search or paste Youtube URL"
             className="w-full pl-4 py-2 outline-none bg-transparent font-light"
             onChange={({ target: { value } }) => handleChangeKeyword(value)}
+            onKeyPress={handleKeyPressOnSearch}
           />
           {keyword.length > 0 && (
             <IconButton onClick={handleClearKeyword}>

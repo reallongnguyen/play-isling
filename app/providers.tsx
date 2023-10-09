@@ -4,7 +4,7 @@ import '@/services/initFirebase'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { configAxiosInterceptor } from '@/lib/account/repo/axiosConfig'
 import { useToast } from '@/components/atoms/use-toast'
-import signInSurreal from '@/lib/common/repo/surreal/initial'
+import { surreal } from '@/lib/common/repo/surreal'
 import { useEffect } from 'react'
 
 configAxiosInterceptor()
@@ -15,7 +15,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   useToast()
 
   useEffect(() => {
-    signInSurreal()
+    surreal.signin()
+    surreal.autoReconnect()
   }, [])
 
   return (

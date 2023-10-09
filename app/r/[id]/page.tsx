@@ -77,7 +77,11 @@ function Page({ params }: { params: Record<string, string> }) {
           />
           <div
             className={`
-              ${mode === 'silent' ? 'col-span-2' : 'grid grid-cols-[1fr_auto]'}
+              ${
+                mode === 'silent'
+                  ? 'col-span-2'
+                  : 'grid grid-cols-[1fr_auto] gap-4'
+              }
               text-secondary
             `}
           >
