@@ -116,7 +116,7 @@ function Page({ params }: { params: Record<string, string> }) {
                     {getAvatarString(getDisplayName(user))}
                   </AvatarFallback>
                 </Avatar>
-                <div className="mt-2 text-sm font-semibold">
+                <div className="mt-2 text-xs font-semibold text-center">
                   {getDisplayName(user)}
                 </div>
               </div>

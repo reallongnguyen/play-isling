@@ -14,10 +14,12 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
 } from '@/components/atoms/dropdown-menu'
-import { Avatar, AvatarFallback } from '@/components/atoms/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/avatar'
 
 import IconButton from '../../atoms/buttons/IconButton'
 import { GuestDropdownContent } from './UserDropdownContent'
+import { Guest } from '@/lib/play-isling/models/Guest'
+import useGuest from '@/lib/play-isling/usecases/useGuest'
 
 export interface RoomHeaderForGuestProps {
   room?: Room
@@ -26,6 +28,7 @@ export interface RoomHeaderForGuestProps {
     title: string
   }
   isShowRoom?: boolean
+  guestProfile?: Guest
 }
 
 const RoomHeaderForGuest: FC<RoomHeaderForGuestProps> = ({
@@ -39,6 +42,7 @@ const RoomHeaderForGuest: FC<RoomHeaderForGuestProps> = ({
   const timeout = useRef<any>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const shouldFocusSearchInputOnMounted = useRef(true)
+  const { guestProfile } = useGuest()
 
   const handleChangeKeyword = (value: string) => {
     setKeyword(value)
@@ -108,9 +112,13 @@ const RoomHeaderForGuest: FC<RoomHeaderForGuestProps> = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="cursor-pointer">
-                <AvatarFallback>
-                  <IoPersonOutline />
-                </AvatarFallback>
+                {guestProfile ? (
+                  <AvatarImage src={guestProfile.avatarUrl} />
+                ) : (
+                  <AvatarFallback>
+                    <IoPersonOutline />
+                  </AvatarFallback>
+                )}
               </Avatar>
             </DropdownMenuTrigger>
             <GuestDropdownContent />

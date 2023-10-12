@@ -22,6 +22,7 @@ import {
 import useAccount from '@/lib/account/useAccount'
 import Link from 'next/link'
 import { getDisplayName } from '@/lib/account/models/profile'
+import useGuest from '@/lib/play-isling/usecases/useGuest'
 
 export function UserDropdownContent() {
   const { userProfile } = useAccount({ mustLogin: false })
@@ -86,9 +87,13 @@ export function UserDropdownContent() {
 }
 
 export function GuestDropdownContent() {
+  const { guestProfile } = useGuest()
+
   return (
     <DropdownMenuContent className="w-56">
-      <DropdownMenuLabel className="truncate">Guest</DropdownMenuLabel>
+      <DropdownMenuLabel className="truncate">
+        {guestProfile ? '[Guest] ' + getDisplayName(guestProfile) : 'Guest'}
+      </DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
         <Link href="/signup">

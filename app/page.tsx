@@ -1,5 +1,5 @@
 'use client'
-import { IoHeart, IoPersonOutline } from 'react-icons/io5'
+import { IoHeart } from 'react-icons/io5'
 import { getAvatarString } from '@/lib/common/user'
 import Roll from '@com/organisms/Roll'
 import HomeHeader from '@/components/templates/headers/HomeHeader'
@@ -12,17 +12,26 @@ import {
 import { getDisplayName } from '@/lib/account/models/profile'
 import RoomCard from '@/components/organisms/room/room-card'
 import useHome from '@/lib/play-isling/usecases/home/useHome'
+import useGuest from '@/lib/play-isling/usecases/useGuest'
 
 function Page() {
   const { userProfile, isLoading, homeData } = useHome()
+  const { guestProfile, isLoading: isGuestLoading } = useGuest()
+
+  const globalLoading = isLoading || isGuestLoading
+  const displayName = userProfile
+    ? getDisplayName(userProfile)
+    : guestProfile
+    ? getDisplayName(guestProfile)
+    : 'GUEST'
 
   return (
     <>
-      {isLoading && <LoadingHeader />}
-      {isLoading && <LoadingScreen />}
+      {globalLoading && <LoadingHeader />}
+      {globalLoading && <LoadingScreen />}
       <header className="fixed h-12 lg:h-14 top-0 left-0 px-2 lg:px-6 w-full bg-primary z-40">
         {!userProfile ? (
-          <HomeHeaderForGuest />
+          <HomeHeaderForGuest guestProfile={guestProfile} />
         ) : (
           <HomeHeader userProfile={userProfile} />
         )}
@@ -43,8 +52,11 @@ function Page() {
               <div className="flex pb-2">
                 {!userProfile ? (
                   <Avatar className="w-16 h-16">
+                    <AvatarImage src={guestProfile?.avatarUrl} />
                     <AvatarFallback>
-                      <IoPersonOutline className="text-2xl" />
+                      <div className="text-2xl">
+                        {getAvatarString(displayName)}
+                      </div>
                     </AvatarFallback>
                   </Avatar>
                 ) : (
@@ -52,16 +64,14 @@ function Page() {
                     <AvatarImage src={userProfile.avatarUrl} />
                     <AvatarFallback>
                       <div className="text-2xl">
-                        {getAvatarString(getDisplayName(userProfile))}
+                        {getAvatarString(displayName)}
                       </div>
                     </AvatarFallback>
                   </Avatar>
                 )}
                 <div className="ml-4 h-full flex flex-col justify-between">
                   <div className="text-secondary/60 leading-none font-light">
-                    {userProfile
-                      ? getDisplayName(userProfile).toUpperCase()
-                      : 'GUEST'}
+                    {displayName.toUpperCase()}
                   </div>
                   <div className="text-3xl font-semibold">
                     {homeData?.collections[0].name}

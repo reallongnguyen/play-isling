@@ -7,14 +7,16 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
 } from '@/components/atoms/dropdown-menu'
-import { Avatar, AvatarFallback } from '@/components/atoms/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/avatar'
 import { IslingLogo } from '@/components/atoms/logo'
+import { Guest } from '@/lib/play-isling/models/Guest'
 
 export interface HeaderProps {
   page?: 'player' | 'search'
+  guestProfile?: Guest
 }
 
-const HomeHeaderForGuest: FC<HeaderProps> = () => {
+const HomeHeaderForGuest: FC<HeaderProps> = ({ guestProfile }) => {
   return (
     <>
       <div className="fixed z-[999] left-1/2 -translate-x-1/2 h-14 flex justify-center items-center text-secondary">
@@ -46,9 +48,13 @@ const HomeHeaderForGuest: FC<HeaderProps> = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="cursor-pointer">
-                <AvatarFallback>
-                  <IoPersonOutline />
-                </AvatarFallback>
+                {guestProfile ? (
+                  <AvatarImage src={guestProfile.avatarUrl} />
+                ) : (
+                  <AvatarFallback>
+                    <IoPersonOutline />
+                  </AvatarFallback>
+                )}
               </Avatar>
             </DropdownMenuTrigger>
             <GuestDropdownContent />

@@ -8,6 +8,47 @@ import { surreal } from '@/lib/common/repo/surreal'
 import useAccount from '@/lib/account/useAccount'
 import { SimpleUser } from '../../models/User'
 import { LiveQueryResponse } from 'surrealdb.js/script/types'
+import useGuest from '../useGuest'
+
+function joinRoomFactory(userID: string, roomID: string) {
+  let shouldClearJoinRoomBackgroundJob = false
+
+  let leaveRoom = () => {
+    shouldClearJoinRoomBackgroundJob = true
+  }
+
+  const joinRoom = async () => {
+    const query = `relate users:${userID}->join->media_rooms:${roomID} set time.joined = time::now(), time.pinged = time::now()`
+
+    const res = await surreal.getConn().query(query)
+
+    const joinId = (res as any)[0].result[0].id
+
+    // ping server every 90s
+    const updatePingQuery = `update ${joinId} set time.pinged = time::now()`
+
+    const updatePingId = setInterval(() => {
+      surreal.getConn().query(updatePingQuery)
+    }, 1000 * 90)
+
+    leaveRoom = () => {
+      clearInterval(updatePingId)
+      surreal
+        .getConn()
+        .delete(joinId)
+        .then(() => console.log('leaveRoom', joinId))
+    }
+
+    if (shouldClearJoinRoomBackgroundJob) {
+      leaveRoom()
+    }
+  }
+
+  return {
+    joinRoom,
+    leaveRoom: () => leaveRoom(),
+  }
+}
 
 export function useRoomInfo(slug: string, shouldListenAudience = false) {
   const queryClient = useQueryClient()
@@ -27,6 +68,7 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
   const { userProfile } = useAccount({ mustLogin: false })
   const [audienceMap, setAudienceMap] = useState<Record<string, SimpleUser>>({})
   const [surrealReconnectSignal, setSurrealReconnectSignal] = useState(0)
+  const { guestProfile, isLoading: isGuestLoading, isGuest } = useGuest()
 
   const audiences = useMemo(() => {
     const userSet = Object.values(audienceMap).reduce(
@@ -45,42 +87,15 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
   // TODO: write joinRoom(), listenRoom(), getAudiences() at repository layer
   // watch audience's list
   useEffect(() => {
-    if (!userProfile) {
+    if (!userProfile && !guestProfile) {
       return
     }
 
-    let shouldClearJoinRoomBackgroundJob = false
+    const userId = userProfile
+      ? String(userProfile.accountId)
+      : guestProfile?.guestId || ''
 
-    let leaveRoom = () => {
-      shouldClearJoinRoomBackgroundJob = true
-    }
-
-    const joinRoom = async () => {
-      const query = `relate users:${userProfile.accountId}->join->media_rooms:${roomUID} set time.joined = time::now(), time.pinged = time::now()`
-
-      const res = await surreal.getConn().query(query)
-
-      const joinId = (res as any)[0].result[0].id
-
-      // ping server every 90s
-      const updatePingQuery = `update ${joinId} set time.pinged = time::now()`
-
-      const updatePingId = setInterval(() => {
-        surreal.getConn().query(updatePingQuery)
-      }, 1000 * 90)
-
-      leaveRoom = () => {
-        clearInterval(updatePingId)
-        surreal
-          .getConn()
-          .delete(joinId)
-          .then(() => console.log('leaveRoom', joinId))
-      }
-
-      if (shouldClearJoinRoomBackgroundJob) {
-        leaveRoom()
-      }
-    }
+    const { joinRoom, leaveRoom } = joinRoomFactory(userId, roomUID)
 
     interface SUser {
       id: string
@@ -209,7 +224,30 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
       leaveRoom()
       killLive()
     }
-  }, [roomUID, shouldListenAudience, userProfile, surrealReconnectSignal])
+  }, [
+    roomUID,
+    shouldListenAudience,
+    userProfile,
+    surrealReconnectSignal,
+    guestProfile,
+  ])
+
+  // useEffect(() => {
+  //   if (isGuestLoading || !isGuest || !guestProfile) {
+  //     return
+  //   }
+
+  //   const { joinRoom, leaveRoom } = joinRoomFactory(
+  //     guestProfile.guestId,
+  //     roomUID
+  //   )
+
+  //   surreal.waitConnected().then(() => joinRoom())
+
+  //   return () => {
+  //     leaveRoom()
+  //   }
+  // }, [guestProfile, isGuest, isGuestLoading, roomUID])
 
   useEffect(() => {
     surreal.event.on('reconnected', () => {
