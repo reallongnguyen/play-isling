@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 import { HTMLProps, memo } from 'react'
+import { IoRadio } from 'react-icons/io5'
 
 export class RoomCardProps implements Omit<HTMLProps<HTMLDivElement>, 'size'> {
   room!: RoomPublic
@@ -76,6 +77,20 @@ function RoomCard({
             {room.description && (
               <div className="text-secondary/40 font-light mt-1">
                 {room.description}
+              </div>
+            )}
+            {room.audienceCount > 0 && (
+              <div className="flex items-center h-5 bg-red-600 border-red-800 rounded-sm px-1 text-secondary/80 mt-1">
+                <div className="flex items-center">
+                  <IoRadio />
+                  <p className="ml-1 text-sm">LIVE</p>
+                </div>
+                <p className="text-sm font-light">
+                  <span className="border-secondary">｜</span>
+                  {room.audienceCount == 1
+                    ? `${room.audienceCount} person is watching`
+                    : `${room.audienceCount} people are watching`}
+                </p>
               </div>
             )}
           </div>
