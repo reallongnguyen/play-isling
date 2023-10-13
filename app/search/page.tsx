@@ -33,6 +33,7 @@ function Page() {
     buildApiURL(`/play-isling/v1/search?query=${query}&limit=16`),
     fetcher.get,
     {
+      keepPreviousData: true,
       isPaused: () => queryRef.current === null,
       onError(err) {
         toast({ title: err.message })
