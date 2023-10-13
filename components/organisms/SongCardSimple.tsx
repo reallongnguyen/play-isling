@@ -3,6 +3,7 @@ import { IoAdd, IoCheckmarkCircle } from 'react-icons/io5'
 import Image from 'next/image'
 import Song from '@/models/song/Song'
 import { truncateWithEllipsis } from '@/lib/common/string'
+import { toKMBString } from '@/lib/utils'
 
 export interface SongCardProps {
   song: Song
@@ -64,10 +65,14 @@ const SongCardSimple: FC<SongCardProps> = ({ song }) => {
         <div ref={songTitleRef} className="font-light text-lg">
           {truncateWithEllipsis(songTitle, 150)}
         </div>
-        <div className="font-light text-sm text-secondary/50 mt-3">
+        <div className="flex space-x-4 font-light text-sm text-secondary/50">
+          <p>{toKMBString(song.viewCount) || 0} views</p>
+          <p>{toKMBString(song.likeCount) || 0} likes</p>
+        </div>
+        <div className="font-semibold text-sm text-secondary/50 mt-3">
           {truncateWithEllipsis(song.channelTitle, 50)}
         </div>
-        <div className="font-light text-xs text-secondary/50 mt-3">
+        <div className="font-light text-sm text-secondary/50 mt-3">
           {truncateWithEllipsis(song.description, 90)}
         </div>
       </div>

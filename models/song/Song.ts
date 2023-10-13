@@ -7,6 +7,8 @@ interface Song {
   thumbnail: string
   duration: string
   channelTitle: string
+  viewCount: number
+  likeCount: number
 }
 
 export default Song
@@ -17,7 +19,9 @@ export const newSong = (
   description: string,
   thumbnail: string,
   duration: string,
-  channelTitle: string
+  channelTitle: string,
+  viewCount: number,
+  likeCount: number
 ): Song => {
   const song: Song = {
     id,
@@ -26,6 +30,8 @@ export const newSong = (
     thumbnail,
     duration,
     channelTitle,
+    viewCount,
+    likeCount,
   }
 
   return song
@@ -49,6 +55,8 @@ export const fromYoutubeVideo = (video: YouTubeVideo) => {
     video.snippet.description,
     video.snippet.thumbnails.high.url,
     duration,
-    video.snippet.channelTitle
+    video.snippet.channelTitle,
+    video.statistics.viewCount,
+    video.statistics.likeCount
   )
 }

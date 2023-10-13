@@ -83,12 +83,12 @@ const SongCard: FC<SongCardProps> = ({
           className="font-light text-sm group-hover:hidden"
         >
           <p>{songTitle}</p>
-          <div className="flex">
+          <div className="grid grid-cols-[auto_1fr]">
             <div className="text-xs opacity-75 flex items-center">
               <IoSparklesOutline />
               <p className="mx-1">added by</p>
             </div>
-            {songRequest.user.name}
+            <p className="truncate text-ellipsis">{songRequest.user.name}</p>
           </div>
         </div>
         <div className="hidden group-hover:block h-full">

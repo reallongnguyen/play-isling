@@ -3,7 +3,7 @@ import { Tooltip } from '@/components/atoms/tooltip'
 import { getDisplayName } from '@/lib/account/models/profile'
 import { getAvatarString } from '@/lib/common/user'
 import { RoomPublic, getRoomURL } from '@/lib/play-isling/models/Room'
-import { cn } from '@/lib/utils'
+import { cn, toKMBString } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 import { HTMLProps, memo } from 'react'
@@ -89,7 +89,7 @@ function RoomCard({
                   <span className="border-secondary">｜</span>
                   {room.audienceCount == 1
                     ? `${room.audienceCount} person is watching`
-                    : `${room.audienceCount} people are watching`}
+                    : `${toKMBString(room.audienceCount)} people are watching`}
                 </p>
               </div>
             ) : (

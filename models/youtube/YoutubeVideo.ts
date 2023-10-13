@@ -12,6 +12,10 @@ export interface YouTubeVideo {
       }
     }
   }
+  statistics: {
+    viewCount: number
+    likeCount: number
+  }
   contentDetails: {
     duration: string
     aspectRatio: string

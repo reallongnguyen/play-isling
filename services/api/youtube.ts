@@ -34,7 +34,7 @@ export const getYoutubeVideos = async (videoId: string) => {
     method: 'GET',
     url: 'https://www.googleapis.com/youtube/v3/videos',
     params: {
-      part: 'snippet,contentDetails',
+      part: 'snippet,contentDetails,statistics',
       id: videoId,
       key: randomApiKey(),
     },
