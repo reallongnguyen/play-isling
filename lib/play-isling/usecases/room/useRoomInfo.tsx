@@ -68,7 +68,7 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
   const { userProfile } = useAccount({ mustLogin: false })
   const [audienceMap, setAudienceMap] = useState<Record<string, SimpleUser>>({})
   const [surrealReconnectSignal, setSurrealReconnectSignal] = useState(0)
-  const { guestProfile, isLoading: isGuestLoading, isGuest } = useGuest()
+  const { guestProfile } = useGuest()
 
   const audiences = useMemo(() => {
     const userSet = Object.values(audienceMap).reduce(
@@ -231,23 +231,6 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
     surrealReconnectSignal,
     guestProfile,
   ])
-
-  // useEffect(() => {
-  //   if (isGuestLoading || !isGuest || !guestProfile) {
-  //     return
-  //   }
-
-  //   const { joinRoom, leaveRoom } = joinRoomFactory(
-  //     guestProfile.guestId,
-  //     roomUID
-  //   )
-
-  //   surreal.waitConnected().then(() => joinRoom())
-
-  //   return () => {
-  //     leaveRoom()
-  //   }
-  // }, [guestProfile, isGuest, isGuestLoading, roomUID])
 
   useEffect(() => {
     surreal.event.on('reconnected', () => {

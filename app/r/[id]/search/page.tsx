@@ -15,6 +15,8 @@ import useAccount from '@/lib/account/useAccount'
 import { newUser } from '@/models/user/User'
 import { useRoomInfo } from '@/lib/play-isling/usecases/room/useRoomInfo'
 import useTrackingRoom from '@/lib/play-isling/usecases/useTrackingRoom'
+import useGuest from '@/lib/play-isling/usecases/useGuest'
+import { getDisplayName } from '@/lib/account/models/profile'
 
 const youtubeVideoURLRegex =
   /^(?:(?:https:\/\/)?(?:www.)?youtube.com\/watch\?v=(.*?)(?=&|$).*)|(?:(?:https:\/\/)?(?:.*?)\/(.*?)(?=[?#]|$))/
@@ -22,6 +24,7 @@ const youtubeVideoURLRegex =
 const Page = ({ params }: { params: Record<string, string> }) => {
   const playlist = useRecoilValue(playlistStore)
   const { userProfile } = useAccount({ mustLogin: false })
+  const { guestProfile } = useGuest()
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryStore)
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([])
 
@@ -59,12 +62,13 @@ const Page = ({ params }: { params: Record<string, string> }) => {
   }
 
   const addSongRequest = (youtubeSong: Song) => async () => {
+    const profile = userProfile || guestProfile
+    const displayName = profile ? getDisplayName(profile) : ''
+    const userId = userProfile?.accountId || guestProfile?.guestId || ''
+
     const songRequest = newSongRequest(
       youtubeSong,
-      newUser(
-        `${userProfile?.accountId || 0}`,
-        userProfile?.firstName || 'Anonymous'
-      )
+      newUser(String(userId), displayName)
     )
     const newPlaylist = pushSongRequest(playlist, songRequest)
     console.log(newPlaylist)

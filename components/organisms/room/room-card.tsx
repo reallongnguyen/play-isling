@@ -79,8 +79,8 @@ function RoomCard({
                 {room.description}
               </div>
             )}
-            {room.audienceCount > 0 && (
-              <div className="flex items-center h-5 bg-red-600 border-red-800 rounded-sm px-1 text-secondary/80 mt-1">
+            {room.audienceCount > 0 ? (
+              <div className="top-full flex items-center h-5 bg-red-600 border-red-800 rounded-sm px-1 text-secondary/80 mt-1">
                 <div className="flex items-center">
                   <IoRadio />
                   <p className="ml-1 text-sm">LIVE</p>
@@ -92,6 +92,8 @@ function RoomCard({
                     : `${room.audienceCount} people are watching`}
                 </p>
               </div>
+            ) : (
+              <div className="h-5"></div>
             )}
           </div>
         </div>

@@ -46,7 +46,7 @@ function Page() {
         </div>
       )}
       {homeData?.collections[0] && (
-        <div className="mx-40">
+        <div className="mx-16 xl:mx-40">
           <Roll
             title={
               <div className="flex pb-2">
@@ -87,7 +87,7 @@ function Page() {
         </div>
       )}
       {homeData?.collections.slice(1).map((collection) => (
-        <div className="mx-40 mt-24" key={collection.id}>
+        <div className="mx-16 xl:mx-40 mt-16" key={collection.id}>
           <Roll
             title={
               <div className="flex pb-2">
