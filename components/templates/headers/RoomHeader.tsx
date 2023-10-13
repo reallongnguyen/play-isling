@@ -9,7 +9,7 @@ import {
 import { getAvatarString } from '@/lib/common/user'
 import Link from 'next/link'
 import { useRecoilState } from 'recoil'
-import { searchQueryStore } from '@/stores/search'
+import { searchVideoQueryStore } from '@/stores/search'
 import { Room } from '@/lib/play-isling/models/Room'
 import {
   DropdownMenu,
@@ -39,7 +39,7 @@ const RoomHeader: FC<RoomHeaderProps> = ({
   isShowRoom,
   userProfile,
 }) => {
-  const [searchQuery, setSearchQuery] = useRecoilState(searchQueryStore)
+  const [searchQuery, setSearchQuery] = useRecoilState(searchVideoQueryStore)
   const [keyword, setKeyword] = useState<string>(searchQuery)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const timeout = useRef<any>(null)

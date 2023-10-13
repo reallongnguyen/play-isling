@@ -1,15 +1,8 @@
 'use client'
 import { FC, KeyboardEventHandler, useEffect, useRef, useState } from 'react'
-import {
-  IoChevronBack,
-  IoClose,
-  IoPersonOutline,
-  IoTvOutline,
-} from 'react-icons/io5'
+import { IoChevronBack, IoClose } from 'react-icons/io5'
+import { getAvatarString } from '@/lib/common/user'
 import Link from 'next/link'
-import { useRecoilState } from 'recoil'
-import { searchVideoQueryStore } from '@/stores/search'
-import { Room } from '@/lib/play-isling/models/Room'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -17,32 +10,41 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/avatar'
 
 import IconButton from '../../atoms/buttons/IconButton'
-import { GuestDropdownContent } from './UserDropdownContent'
-import { Guest } from '@/lib/play-isling/models/Guest'
+import {
+  GuestDropdownContent,
+  UserDropdownContent,
+} from './UserDropdownContent'
+import { getDisplayName } from '@/lib/account/models/profile'
+import useAccount from '@/lib/account/useAccount'
 import useGuest from '@/lib/play-isling/usecases/useGuest'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-export interface RoomHeaderForGuestProps {
-  room?: Room
+export interface RoomHeaderProps {
   backBtn?: {
     url: string
     title: string
   }
-  isShowRoom?: boolean
-  guestProfile?: Guest
 }
 
-const RoomHeaderForGuest: FC<RoomHeaderForGuestProps> = ({
-  room,
-  backBtn,
-  isShowRoom,
-}) => {
-  const [searchQuery, setSearchQuery] = useRecoilState(searchVideoQueryStore)
-  const [keyword, setKeyword] = useState<string>(searchQuery)
+const SearchHeader: FC<RoomHeaderProps> = ({ backBtn }) => {
+  const [keyword, setKeyword] = useState<string>('')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const timeout = useRef<any>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
-  const shouldFocusSearchInputOnMounted = useRef(true)
+  const { userProfile } = useAccount({ mustLogin: false })
   const { guestProfile } = useGuest()
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  const setSearchQuery = (q: string) => {
+    if (q === '') {
+      router.push('/search')
+
+      return
+    }
+
+    router.push('/search?q=' + q)
+  }
 
   const handleChangeKeyword = (value: string) => {
     setKeyword(value)
@@ -54,7 +56,7 @@ const RoomHeaderForGuest: FC<RoomHeaderForGuestProps> = ({
     timeout.current = setTimeout(function () {
       setSearchQuery(value)
       timeout.current = undefined
-    }, 666)
+    }, 500)
   }
 
   const handleKeyPressOnSearch: KeyboardEventHandler<HTMLInputElement> = (
@@ -71,15 +73,23 @@ const RoomHeaderForGuest: FC<RoomHeaderForGuestProps> = ({
 
   const handleClearKeyword = () => {
     setKeyword('')
+    setSearchQuery('')
     searchInputRef.current?.focus()
   }
 
   useEffect(() => {
-    if (searchQuery !== '' && shouldFocusSearchInputOnMounted.current) {
+    const q = searchParams.get('q')
+
+    if (q !== null) {
+      if (q === '') {
+        router.replace('/')
+      }
+
+      setKeyword(q)
+    } else {
       searchInputRef.current?.focus()
-      shouldFocusSearchInputOnMounted.current = false
     }
-  }, [searchQuery])
+  }, [router, searchParams])
 
   return (
     <>
@@ -88,7 +98,7 @@ const RoomHeaderForGuest: FC<RoomHeaderForGuestProps> = ({
           <input
             ref={searchInputRef}
             value={keyword}
-            placeholder="Search or paste Youtube URL"
+            placeholder="Search rooms by name, owner's name"
             className="w-full pl-4 py-2 outline-none bg-transparent font-light"
             onChange={({ target: { value } }) => handleChangeKeyword(value)}
             onKeyPress={handleKeyPressOnSearch}
@@ -112,34 +122,42 @@ const RoomHeaderForGuest: FC<RoomHeaderForGuestProps> = ({
               </div>
             </Link>
           )}
-          {isShowRoom && (
-            <div className="max-w-[192px] flex items-center bg-primary-light rounded px-3 h-8">
-              <IoTvOutline className="text-lg text-secondary/80" />
-              <div className="truncate text-ellipsis ml-2 font-light text-secondary/90 text-sm">
-                {room?.name}
-              </div>
-            </div>
-          )}
         </div>
         <div className="flex items-center h-full space-x-3 lg:space-x-6">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Avatar className="cursor-pointer">
-                {guestProfile ? (
-                  <AvatarImage src={guestProfile.avatarUrl} />
-                ) : (
+          {userProfile && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="cursor-pointer">
+                  <AvatarImage src={userProfile.avatarUrl} />
                   <AvatarFallback>
-                    <IoPersonOutline />
+                    <div className="text-sm">
+                      {getAvatarString(getDisplayName(userProfile))}
+                    </div>
                   </AvatarFallback>
-                )}
-              </Avatar>
-            </DropdownMenuTrigger>
-            <GuestDropdownContent />
-          </DropdownMenu>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <UserDropdownContent />
+            </DropdownMenu>
+          )}
+          {guestProfile && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="cursor-pointer">
+                  <AvatarImage src={guestProfile.avatarUrl} />
+                  <AvatarFallback>
+                    <div className="text-sm">
+                      {getAvatarString(getDisplayName(guestProfile))}
+                    </div>
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <GuestDropdownContent />
+            </DropdownMenu>
+          )}
         </div>
       </div>
     </>
   )
 }
 
-export default RoomHeaderForGuest
+export default SearchHeader

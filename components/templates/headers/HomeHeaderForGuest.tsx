@@ -27,7 +27,10 @@ const HomeHeaderForGuest: FC<HeaderProps> = ({ guestProfile }) => {
           <Link href="/" className="text-lg font-semibold text-secondary/60">
             Explore
           </Link>
-          <Link href="/" className="text-lg font-semibold text-secondary/60">
+          <Link
+            href="/search"
+            className="text-lg font-semibold text-secondary/60"
+          >
             Search
           </Link>
           <Link

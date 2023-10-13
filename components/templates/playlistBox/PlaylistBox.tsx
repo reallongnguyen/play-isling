@@ -31,7 +31,9 @@ const defaultSong = newSong(
   'EM ĐỒNG Ý',
   'https://i.ytimg.com/vi/IOe0tNoUGv8/hqdefault.jpg',
   '4:30',
-  'ĐỨC PHÚC'
+  'ĐỨC PHÚC',
+  1000,
+  1000
 )
 
 const defaultSongReq = newSongRequest(

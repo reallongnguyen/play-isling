@@ -33,7 +33,11 @@ const HomeHeader: FC<HeaderProps> = ({ userProfile }) => {
             url="/me/rooms"
             active={pathName === '/me/rooms'}
           />
-          <MenuItem name="Search" url="/" active={pathName === '/search'} />
+          <MenuItem
+            name="Search"
+            url="/search"
+            active={pathName === '/search'}
+          />
         </div>
       </div>
       <div className="grid grid-cols-[1fr_auto] h-full text-secondary">

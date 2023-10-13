@@ -2,7 +2,7 @@
 import { useEffect, useMemo } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useRecoilValue } from 'recoil'
-import { searchQueryStore } from '@/stores/search'
+import { searchVideoQueryStore } from '@/stores/search'
 import ReactionIcon from '@com/atoms/ReactionIcon'
 import { ReactionType } from '@/models/Reaction'
 import PlayerStateRepository from '@/services/firestore/PlayerStateRepository'
@@ -28,7 +28,7 @@ const listReaction: ReactionType[] = [
 
 function Page({ params }: { params: Record<string, string> }) {
   const { isLoading: isLoadingAuth } = useAccount({ mustLogin: false })
-  const searchQuery = useRecoilValue(searchQueryStore)
+  const searchQuery = useRecoilValue(searchVideoQueryStore)
   const curSongReq = useRecoilValue(curSongReqStore)
   const router = useRouter()
   const pathName = usePathname()

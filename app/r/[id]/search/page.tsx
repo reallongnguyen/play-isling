@@ -10,7 +10,7 @@ import { pushSongRequest } from '@/models/songRequest/Playlist'
 import PlaylistRepository from '@/services/firestore/PlaylistRepository'
 import { getYoutubeVideos, searchYoutubeVideo } from '@/services/api/youtube'
 import { YouTubeVideo } from '@/models/youtube/YoutubeVideo'
-import { searchQueryStore } from '@/stores/search'
+import { searchVideoQueryStore } from '@/stores/search'
 import useAccount from '@/lib/account/useAccount'
 import { newUser } from '@/models/user/User'
 import { useRoomInfo } from '@/lib/play-isling/usecases/room/useRoomInfo'
@@ -25,7 +25,7 @@ const Page = ({ params }: { params: Record<string, string> }) => {
   const playlist = useRecoilValue(playlistStore)
   const { userProfile } = useAccount({ mustLogin: false })
   const { guestProfile } = useGuest()
-  const [searchQuery, setSearchQuery] = useRecoilState(searchQueryStore)
+  const [searchQuery, setSearchQuery] = useRecoilState(searchVideoQueryStore)
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([])
 
   const roomSlug = (params?.id as string) || 'isling'
