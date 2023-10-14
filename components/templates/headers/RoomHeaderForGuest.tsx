@@ -83,7 +83,7 @@ const RoomHeaderForGuest: FC<RoomHeaderForGuestProps> = ({
 
   return (
     <>
-      <div className="fixed z-[999] left-1/2 -translate-x-1/2 h-14 flex justify-center items-center text-secondary">
+      <div className="hidden md:flex fixed z-[999] left-1/2 -translate-x-1/2 h-14 justify-center items-center text-secondary">
         <div className="w-[34rem] rounded-full border border-primary-light flex items-center pr-2">
           <input
             ref={searchInputRef}
@@ -104,7 +104,7 @@ const RoomHeaderForGuest: FC<RoomHeaderForGuestProps> = ({
         <div className="max-w-[192px] flex items-center h-full space-x-8">
           {backBtn && (
             <Link href={backBtn.url} className="cursor-pointer">
-              <div className="flex items-center space-x-0 group text-blue-300">
+              <div className="flex items-center space-x-0 group text-blue-300 min-w-[2rem]">
                 <IoChevronBack className="text-2xl group-hover:brightness-75 group-active:scale-95" />
                 <div className="truncate text-ellipsis font-light group-hover:brightness-75 text-sm hidden xl:block">
                   {backBtn.title}

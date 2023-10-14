@@ -46,10 +46,6 @@ function Page({ params }: { params: Record<string, string> }) {
     query.toString() ? `?${query.toString()}` : ''
   }`
 
-  const searchPageMobileURL = `/m/${pathName}/search${
-    query.toString() ? `?${query.toString()}` : ''
-  }`
-
   const playerRepo = useMemo(
     () => new PlayerStateRepository(roomSlug),
     [roomSlug]
@@ -132,32 +128,32 @@ function Page({ params }: { params: Record<string, string> }) {
         )}
         <div className="h-24" />
       </div>
-      {!isLoadingAuth && (
-        <div className="lg:hidden px-2 w-full h-full flex flex-col justify-end">
-          <div className="flex items-center justify-center space-x-4 h-12 mt-2">
-            {listReaction.map((type) => (
-              <div
-                key={type}
-                onClick={handleReaction(type as ReactionType)}
-                className="w-12 h-12 cursor-pointer hover:w-12 hover:h-12 transition-all duration-700 group"
-              >
-                <ReactionIcon
-                  type={type as ReactionType}
-                  className="group-active:scale-110 transition-all duration-100"
-                />
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-center py-4">
-            <Link href={searchPageMobileURL}>
-              <Button size="lg" variant="highlight">
-                <IoAdd className="mr-2" />
-                Add Song
-              </Button>
-            </Link>
-          </div>
+      <div className="lg:hidden px-2 w-full h-full flex flex-col justify-end">
+        <div className="h-12"></div>
+        <div className="text-xl text-secondary">{curSongReq?.song.title}</div>
+        <div className="flex items-center justify-center space-x-4 h-12 mt-2">
+          {listReaction.map((type) => (
+            <div
+              key={type}
+              onClick={handleReaction(type as ReactionType)}
+              className="w-12 h-12 cursor-pointer hover:w-12 hover:h-12 transition-all duration-700 group"
+            >
+              <ReactionIcon
+                type={type as ReactionType}
+                className="group-active:scale-110 transition-all duration-100"
+              />
+            </div>
+          ))}
         </div>
-      )}
+        <div className="flex justify-center py-4">
+          <Link href={searchPageURL}>
+            <Button size="lg" variant="highlight">
+              <IoAdd className="mr-2" />
+              Add Song
+            </Button>
+          </Link>
+        </div>
+      </div>
     </>
   )
 }

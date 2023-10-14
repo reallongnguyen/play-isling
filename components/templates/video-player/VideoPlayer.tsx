@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
 import { useSpring, animated } from '@react-spring/web'
 import { useParams, usePathname, useSearchParams } from 'next/navigation'
@@ -44,6 +44,7 @@ function VideoPlayer() {
   const isLightMode = !!searchParam.get('lightMode')
   const mode = searchParam.get('mode') || 'master'
   const isMounted = useRef(true)
+  const [hasVideoPlaceholder, setHasVideoPlaceholder] = useState(false)
 
   const playerRepo = useMemo(() => {
     if (typeof roomId === 'undefined') {
@@ -152,16 +153,25 @@ function VideoPlayer() {
   useEffect(() => {
     if (isMounted.current && isLivingRoom) {
       isMounted.current = false
+      let attempt = 20
 
       // set video player position
       const id = setInterval(() => {
         const videoPlaceholder = document.getElementById('video-placeholder')
 
         if (!videoPlaceholder) {
+          if (attempt <= 0) {
+            clearInterval(id)
+            setHasVideoPlaceholder(false)
+          }
+
+          attempt -= 1
+
           return
         }
 
         clearInterval(id)
+        setHasVideoPlaceholder(true)
 
         clonePositionAndClass(
           playerRef.current,
@@ -252,10 +262,10 @@ function VideoPlayer() {
   }, [resetCurSongReq, shouldShowPlayer, roomId, resetPlaylist])
 
   return (
-    <>
+    <div className="hidden lg:block">
       <ReactionPool elementRef={playerRef} />
       <animated.div ref={playerRef} style={playerProps}>
-        {curSongReq && mode !== 'silent' && (
+        {hasVideoPlaceholder && curSongReq && mode !== 'silent' && (
           <ReactPlayer
             ref={player}
             url={youtubeVideoBaseUrl + curSongReq.song.id}
@@ -272,9 +282,9 @@ function VideoPlayer() {
           />
         )}
         {curSongReq && mode === 'silent' && (
-          <div className="w-full h-full object-scale-down">
+          <div className="w-full h-full">
             <Image
-              className="scale-[1.4]"
+              className="scale-[1.1]"
               src={curSongReq.song.thumbnail}
               alt={curSongReq.song.title}
               fill
@@ -282,7 +292,7 @@ function VideoPlayer() {
           </div>
         )}
       </animated.div>
-    </>
+    </div>
   )
 }
 

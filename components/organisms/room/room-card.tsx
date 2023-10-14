@@ -17,9 +17,9 @@ export class RoomCardProps implements Omit<HTMLProps<HTMLDivElement>, 'size'> {
 }
 
 const sizeMap = {
-  large: 'w-96',
-  medium: 'w-80',
-  small: 'w-64',
+  large: 'w-40 lg:w-96',
+  medium: 'w-32 lg:w-80',
+  small: 'w-24 lg:w-64',
 }
 
 function RoomCard({
@@ -44,7 +44,7 @@ function RoomCard({
     >
       <Link href={getRoomURL(room)}>
         <div
-          className={`relative aspect-video rounded ${sizeClass} overflow-hidden hover:brightness-75`}
+          className={`relative aspect-[1/1.3] lg:aspect-video rounded ${sizeClass} overflow-hidden hover:brightness-75`}
         >
           <Image
             src={room.cover}
@@ -56,14 +56,11 @@ function RoomCard({
         </div>
       </Link>
       {!hideTitle && (
-        <div className="flex space-x-3 mt-4 items-start">
+        <div className="flex space-x-2 lg:space-x-3 mt-2 lg:mt-4 items-start">
           {room.owner && (
             <Tooltip content={getDisplayName(room.owner)}>
-              <Avatar>
-                <AvatarImage
-                  src={room.owner.avatarUrl}
-                  className="bg-primary-light"
-                />
+              <Avatar className="w-5 h-5 lg:w-8 lg:h-8">
+                <AvatarImage src={room.owner.avatarUrl} />
                 <AvatarFallback>
                   {getAvatarString(getDisplayName(room.owner))}
                 </AvatarFallback>
@@ -71,11 +68,11 @@ function RoomCard({
             </Tooltip>
           )}
           <div>
-            <div className="text-xl">
+            <div className="text-sm lg:text-lg">
               <Link href={getRoomURL(room)}>{room.name}</Link>
             </div>
             {room.description && (
-              <div className="text-secondary/40 font-light mt-1">
+              <div className="hidden lg:block text-secondary/40 font-light mt-1">
                 {room.description}
               </div>
             )}
@@ -85,7 +82,7 @@ function RoomCard({
                   <IoRadio />
                   <p className="ml-1 text-sm">LIVE</p>
                 </div>
-                <p className="text-sm font-light">
+                <p className="hidden lg:block text-sm font-light">
                   <span className="border-secondary">｜</span>
                   {room.audienceCount == 1
                     ? `${room.audienceCount} person is watching`

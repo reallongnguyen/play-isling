@@ -3,7 +3,10 @@ import { FC } from 'react'
 import { getAvatarString } from '@/lib/common/user'
 import Link from 'next/link'
 
-import { UserDropdownContent } from './UserDropdownContent'
+import {
+  GuestDropdownContent,
+  UserDropdownContent,
+} from './UserDropdownContent'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -46,7 +49,7 @@ const HomeHeader: FC = () => {
   return (
     <>
       <div className="fixed z-[999] left-1/2 -translate-x-1/2 h-14 flex justify-center items-center text-secondary">
-        <div className="w-[34rem] rounded-full flex justify-center items-center pr-2 space-x-12">
+        <div className="hidden lg:flex w-[34rem] rounded-full justify-center items-center pr-2 space-x-12">
           {menuItems.map((item) => (
             <MenuItem
               key={item.name}
@@ -73,7 +76,7 @@ const HomeHeader: FC = () => {
                 </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
-            <UserDropdownContent />
+            {userProfile ? <UserDropdownContent /> : <GuestDropdownContent />}
           </DropdownMenu>
         </div>
       </div>

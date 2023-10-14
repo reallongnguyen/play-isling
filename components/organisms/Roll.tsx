@@ -117,7 +117,7 @@ const Roll: FC<PropsWithChildren<RollProps>> = ({ title, children }) => {
       </div>
       <div
         ref={scrollRef}
-        className="w-full overflow-x-auto flex space-x-6 scrollbar-hide"
+        className="w-full overflow-x-auto flex space-x-3 lg:space-x-6 scrollbar-hide"
       >
         {children}
       </div>

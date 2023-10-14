@@ -27,7 +27,7 @@ import SongCard from '../../organisms/SongCard'
 
 const defaultSong = newSong(
   'IOe0tNoUGv8',
-  'EM ĐỒNG Ý (I DO) - ĐỨC PHÚC x 911 x KHẮC HƯNG',
+  'EM ĐỒNG Ý (I DO)',
   'EM ĐỒNG Ý',
   'https://i.ytimg.com/vi/IOe0tNoUGv8/hqdefault.jpg',
   '4:30',
@@ -68,7 +68,7 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
   const scrollRef = useRef<HTMLDivElement>(null)
   const params = useParams()
   const { toast } = useToast()
-  const [songCardHeight, setSongCardHeight] = useState(88)
+  const [songCardHeight, setSongCardHeight] = useState(92)
   const songCardRef = useRef<HTMLDivElement>(null)
 
   const roomId = (params?.id as string) || 'isling'
@@ -158,12 +158,14 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
   }
 
   useEffect(() => {
-    if (!songCardRef.current) {
-      return
-    }
+    setTimeout(() => {
+      if (!songCardRef.current) {
+        return
+      }
 
-    setSongCardHeight(songCardRef.current.clientHeight + 12)
-  }, [playlist.list.length])
+      setSongCardHeight(songCardRef.current.clientHeight + 12)
+    }, 200)
+  }, [])
 
   // on the songs in playlist is changed
   // or player state (current song) is changed
@@ -347,6 +349,16 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
 
   return (
     <div className="relative w-full h-full overflow-hidden">
+      <div className="w-0 h-0 absolute invisible">
+        <div ref={songCardRef}>
+          <SongCard
+            songRequest={defaultSongReq}
+            isCurSong={false}
+            play={() => playBySongReqId('')}
+            remove={() => removeSongRequest('')}
+          />
+        </div>
+      </div>
       <div className="absolute w-full h-full blur-3xl z-10 bg-primary">
         {curSongReq && (
           <Image
@@ -377,7 +389,7 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
             changeListOrder={handleChangePlaylistOrder}
             getItemId={(item) => item.id}
             renderItem={(item) => (
-              <div ref={songCardRef} className="px-2 lg:px-4">
+              <div className="px-2 lg:px-4">
                 <SongCard
                   songRequest={item}
                   isCurSong={curSongReq?.id === item.id}
@@ -394,7 +406,7 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
           />
         </div>
       </div>
-      <div className="fixed lg:absolute bottom-0 w-full z-30 backdrop-blur-md">
+      <div className="hidden lg:block fixed lg:absolute bottom-0 w-full z-30 backdrop-blur-md">
         <div className="relative p-2 lg:p-4">
           <MusicController
             next={next}

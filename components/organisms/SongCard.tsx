@@ -1,10 +1,5 @@
 import { FC, MouseEvent, memo, useEffect, useRef, useState } from 'react'
-import {
-  IoPlay,
-  IoReorderTwo,
-  IoSparklesOutline,
-  IoTrash,
-} from 'react-icons/io5'
+import { IoPlay, IoSparklesOutline, IoTrash } from 'react-icons/io5'
 import Image from 'next/image'
 import SongRequest from '@/models/songRequest/SongRequest'
 import { truncateWithEllipsis } from '@/lib/common/string'
@@ -78,10 +73,7 @@ const SongCard: FC<SongCardProps> = ({
         />
       </div>
       <div className="pl-2 text-[#f8f8f2] h-full relative">
-        <div
-          ref={songTitleRef}
-          className="font-light text-sm group-hover:hidden"
-        >
+        <div ref={songTitleRef} className="font-light text-sm">
           <p>{songTitle}</p>
           <div className="grid grid-cols-[auto_1fr]">
             <div className="text-xs opacity-75 flex items-center">
@@ -91,21 +83,14 @@ const SongCard: FC<SongCardProps> = ({
             <p className="truncate text-ellipsis">{songRequest.user.name}</p>
           </div>
         </div>
-        <div className="hidden group-hover:block h-full">
-          <div className="flex items-center justify-between h-full">
-            <div className="flex items-center space-x-2 h-full">
-              <IconButton onClick={preventDefault(play)}>
-                <IoPlay />
-              </IconButton>
-              <IconButton onClick={preventDefault(remove)}>
-                <IoTrash />
-              </IconButton>
-            </div>
-            <div className="mr-4">
-              <IconButton>
-                <IoReorderTwo />
-              </IconButton>
-            </div>
+        <div className="opacity-80 lg:opacity-0 lg:group-hover:opacity-80">
+          <div className="flex items-center space-x-2 h-full">
+            <IconButton className="scale-90" onClick={preventDefault(play)}>
+              <IoPlay />
+            </IconButton>
+            <IconButton className="scale-90" onClick={preventDefault(remove)}>
+              <IoTrash />
+            </IconButton>
           </div>
         </div>
       </div>
