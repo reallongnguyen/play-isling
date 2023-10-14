@@ -10,34 +10,51 @@ import {
 } from '@/components/atoms/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/avatar'
 import { IslingLogo } from '@/components/atoms/logo'
-import Profile, { getDisplayName } from '@/lib/account/models/profile'
+import { getDisplayName } from '@/lib/account/models/profile'
 import { usePathname } from 'next/navigation'
 import MenuItem from './MenuItem'
+import useAccount from '@/lib/account/useAccount'
+import useGuest from '@/lib/play-isling/usecases/useGuest'
 
-export interface HeaderProps {
-  page?: 'player' | 'search'
-  userProfile: Profile
-}
+const userMenuItems = [
+  { name: 'Home', path: '/' },
+  { name: 'Explore', path: '/explore' },
+  { name: 'Your room', path: '/me/rooms' },
+  { name: 'Search', path: '/search' },
+]
 
-const HomeHeader: FC<HeaderProps> = ({ userProfile }) => {
+const guestMenuItems = [
+  { name: 'Home', path: '/' },
+  { name: 'Explore', path: '/explore' },
+  { name: 'Create account', path: '/signup' },
+  { name: 'Search', path: '/search' },
+]
+
+const HomeHeader: FC = () => {
   const pathName = usePathname()
+  const { userProfile } = useAccount({ mustLogin: false })
+  const { guestProfile } = useGuest()
+
+  const avatarUrl = userProfile?.avatarUrl || guestProfile?.avatarUrl
+  const userFullName = userProfile
+    ? getDisplayName(userProfile)
+    : guestProfile
+    ? getDisplayName(guestProfile)
+    : 'Guest'
+  const menuItems = userProfile ? userMenuItems : guestMenuItems
 
   return (
     <>
       <div className="fixed z-[999] left-1/2 -translate-x-1/2 h-14 flex justify-center items-center text-secondary">
         <div className="w-[34rem] rounded-full flex justify-center items-center pr-2 space-x-12">
-          <MenuItem name="Home" url="/" active={pathName === '/'} />
-          <MenuItem name="Explore" url="/" active={pathName === '/explore'} />
-          <MenuItem
-            name="Your room"
-            url="/me/rooms"
-            active={pathName === '/me/rooms'}
-          />
-          <MenuItem
-            name="Search"
-            url="/search"
-            active={pathName === '/search'}
-          />
+          {menuItems.map((item) => (
+            <MenuItem
+              key={item.name}
+              name={item.name}
+              url={item.path}
+              active={pathName === item.path}
+            />
+          ))}
         </div>
       </div>
       <div className="grid grid-cols-[1fr_auto] h-full text-secondary">
@@ -50,11 +67,9 @@ const HomeHeader: FC<HeaderProps> = ({ userProfile }) => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="cursor-pointer">
-                <AvatarImage src={userProfile.avatarUrl} />
+                <AvatarImage src={avatarUrl} />
                 <AvatarFallback>
-                  <div className="text-sm">
-                    {getAvatarString(getDisplayName(userProfile))}
-                  </div>
+                  <div className="text-sm">{getAvatarString(userFullName)}</div>
                 </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
