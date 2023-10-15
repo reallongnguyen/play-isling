@@ -60,10 +60,10 @@ export default async function RoomLayout(
           <header className="fixed h-12 lg:h-14 top-0 left-0 px-2 lg:px-6 w-full bg-primary z-40">
             <RoomHeaderWrapper room={room} isShowRoom />
           </header>
-          <div className="fixed bottom-2/3 h-1/3 w-screen lg:relative lg:h-auto lg:w-auto">
+          <div className="fixed bottom-[calc(100vh-100vw/16*9-7rem)] h-[calc(100vw/16*9+7rem)] w-screen lg:relative lg:bottom-auto lg:h-auto lg:w-auto">
             {children}
           </div>
-          <div className="w-full h-2/3 bottom-0 fixed lg:bottom-auto lg:top-[4.5rem] lg:right-6 overflow-hidden lg:rounded-xl lg:h-[calc(100vh-6rem)] lg:w-[26rem]">
+          <div className="w-full h-[calc(100vh-100vw/16*9-7rem)] bottom-0 fixed lg:bottom-auto lg:top-[4.5rem] lg:right-6 overflow-hidden lg:rounded-xl lg:h-[calc(100vh-6rem)] lg:w-[26rem]">
             {playlist}
           </div>
         </div>

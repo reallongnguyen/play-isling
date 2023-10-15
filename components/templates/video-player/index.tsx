@@ -7,7 +7,8 @@ const VideoPlayer = lazy(() => import('./VideoPlayer'))
 
 export default function VideoPlayerLazy() {
   const pathName = usePathname()
-  const shouldShowPlayer = pathName?.startsWith('/r/')
+  const shouldShowPlayer =
+    pathName?.startsWith('/r/') || pathName?.startsWith('/m/r/')
 
   return !shouldShowPlayer ? <></> : <VideoPlayer />
 }

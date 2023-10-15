@@ -36,7 +36,7 @@ export default function RootLayout({ children }: PropsWithChildren<unknown>) {
           <GlobalDialog />
           <Toaster />
           <VideoPlayer />
-          <main>{children}</main>
+          <main id="app">{children}</main>
         </Providers>
       </body>
     </html>

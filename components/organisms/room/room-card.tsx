@@ -7,7 +7,7 @@ import { cn, toKMBString } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 import { HTMLProps, memo } from 'react'
-import { IoRadio } from 'react-icons/io5'
+import { IoPersonOutline, IoRadio } from 'react-icons/io5'
 
 export class RoomCardProps implements Omit<HTMLProps<HTMLDivElement>, 'size'> {
   room!: RoomPublic
@@ -77,17 +77,21 @@ function RoomCard({
               </div>
             )}
             {room.audienceCount > 0 ? (
-              <div className="top-full flex items-center h-5 bg-red-600 border-red-800 rounded-sm px-1 text-secondary/80 mt-1">
+              <div className=" flex items-center h-5 text-xs lg:text-sm bg-red-600 border-red-800 rounded-sm px-1 text-secondary/80 mt-1">
                 <div className="flex items-center">
                   <IoRadio />
-                  <p className="ml-1 text-sm">LIVE</p>
+                  <p className="ml-1">LIVE</p>
                 </div>
-                <p className="hidden lg:block text-sm font-light">
-                  <span className="border-secondary">｜</span>
+                <p className="border-secondary">｜</p>
+                <div className="hidden lg:block font-light">
                   {room.audienceCount == 1
                     ? `${room.audienceCount} person is watching`
                     : `${toKMBString(room.audienceCount)} people are watching`}
-                </p>
+                </div>
+                <div className="lg:hidden flex items-center font-light">
+                  <IoPersonOutline className="mr-1 text-xs lg:text-sm" />
+                  {room.audienceCount}
+                </div>
               </div>
             ) : (
               <div className="h-5"></div>

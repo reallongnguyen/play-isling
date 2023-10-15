@@ -16,3 +16,17 @@ export const getElementByScrollOffsetLeft = (
 
   return undefined
 }
+
+export const displayMinWidth = {
+  // sm --- Small devices (landscape phones, 576px and up)
+  sm: 576,
+
+  // md --- Medium devices (tablets, 768px and up)
+  md: 768,
+
+  // lg --- Large devices (desktops, 992px and up)
+  lg: 992,
+
+  // xl --- Extra large devices (large desktops, 1200px and up)
+  xl: 1200,
+}

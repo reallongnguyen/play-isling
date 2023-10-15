@@ -83,7 +83,7 @@ const RoomHeaderForGuest: FC<RoomHeaderForGuestProps> = ({
 
   return (
     <>
-      <div className="hidden md:flex fixed z-[999] left-1/2 -translate-x-1/2 h-14 justify-center items-center text-secondary">
+      <div className="hidden lg:flex fixed z-[999] left-1/2 -translate-x-1/2 h-14 justify-center items-center text-secondary">
         <div className="w-[34rem] rounded-full border border-primary-light flex items-center pr-2">
           <input
             ref={searchInputRef}

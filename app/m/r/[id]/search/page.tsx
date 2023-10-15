@@ -145,6 +145,7 @@ const Page = ({ params }: { params: Record<string, string> }) => {
     <>
       <div ref={scrollRef} className="h-screen w-screen overflow-y-auto">
         <div className="h-16" />
+        <div id="video-placeholder" className="h-0 w-0"></div>
         <div className="space-y-4">
           {youtubeVideos.map((video) => (
             <div

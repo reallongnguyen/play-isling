@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import ReactPlayer from 'react-player'
 import { useSpring, animated } from '@react-spring/web'
 import { useParams, usePathname, useSearchParams } from 'next/navigation'
@@ -16,6 +16,8 @@ import PlayerStateRepository, {
 import { playlistStore } from '@/stores/playlist'
 import ReactionPool from '@com/templates/ReactionPool'
 import Image from 'next/image'
+import { useResizeObserver } from '@/lib/common/useResizeObserver'
+import { displayMinWidth } from '@/lib/common/html'
 
 const youtubeVideoBaseUrl = 'https://www.youtube.com/watch?v='
 const initialPos = {
@@ -38,13 +40,13 @@ function VideoPlayer() {
   const resetPlaylist = useResetRecoilState(playlistStore)
   const playerRef = useRef<HTMLDivElement>(null)
   const [playerProps, playerCtrl] = useSpring(() => ({ from: initialPos }), [])
-  const shouldShowPlayer = pathName?.startsWith('/r/')
-  const roomId = shouldShowPlayer ? (params?.id as string) : undefined
+  const roomId = params?.id ? (params?.id as string) : undefined
   const isLivingRoom = pathName === `/r/${params?.id}`
   const isLightMode = !!searchParam.get('lightMode')
   const mode = searchParam.get('mode') || 'master'
   const isMounted = useRef(true)
-  const [hasVideoPlaceholder, setHasVideoPlaceholder] = useState(false)
+  const { contentRect } = useResizeObserver('app')
+  const isSmallDevice = contentRect && contentRect.width < displayMinWidth.lg
 
   const playerRepo = useMemo(() => {
     if (typeof roomId === 'undefined') {
@@ -151,37 +153,33 @@ function VideoPlayer() {
   }, [playerRepo])
 
   useEffect(() => {
-    if (isMounted.current && isLivingRoom) {
-      isMounted.current = false
-      let attempt = 20
+    isMounted.current = false
+    let attempt = 40
 
-      // set video player position
-      const id = setInterval(() => {
-        const videoPlaceholder = document.getElementById('video-placeholder')
+    // set video player position
+    const id = setInterval(() => {
+      const videoPlaceholder = document.getElementById('video-placeholder')
 
-        if (!videoPlaceholder) {
-          if (attempt <= 0) {
-            clearInterval(id)
-            setHasVideoPlaceholder(false)
-          }
-
-          attempt -= 1
-
-          return
+      if (!videoPlaceholder) {
+        if (attempt <= 0) {
+          clearInterval(id)
         }
 
-        clearInterval(id)
-        setHasVideoPlaceholder(true)
+        attempt -= 1
 
-        clonePositionAndClass(
-          playerRef.current,
-          'video-placeholder',
-          playerCtrl,
-          'fixed overflow-hidden w-full group',
-          false
-        )
-      }, 50)
-    }
+        return
+      }
+
+      clearInterval(id)
+
+      clonePositionAndClass(
+        playerRef.current,
+        'video-placeholder',
+        playerCtrl,
+        'fixed overflow-hidden w-full group',
+        !isMounted.current
+      )
+    }, 50)
 
     if (isLivingRoom) {
       document.onscroll = () => {
@@ -194,7 +192,7 @@ function VideoPlayer() {
         )
       }
     }
-  }, [clonePositionAndClass, playerCtrl, isLivingRoom])
+  }, [clonePositionAndClass, playerCtrl, isLivingRoom, pathName])
 
   useEffect(() => {
     // set video player position
@@ -259,13 +257,13 @@ function VideoPlayer() {
       resetPlaylist()
       resetCurSongReq()
     }
-  }, [resetCurSongReq, shouldShowPlayer, roomId, resetPlaylist])
+  }, [resetCurSongReq, roomId, resetPlaylist])
 
   return (
-    <div className="hidden lg:block">
+    <div id="video-player">
       <ReactionPool elementRef={playerRef} />
       <animated.div ref={playerRef} style={playerProps}>
-        {hasVideoPlaceholder && curSongReq && mode !== 'silent' && (
+        {curSongReq && mode !== 'silent' && (
           <ReactPlayer
             ref={player}
             url={youtubeVideoBaseUrl + curSongReq.song.id}
@@ -276,6 +274,7 @@ function VideoPlayer() {
             onPause={onPause}
             onEnded={handleVideoEndOrError}
             onError={handleVideoEndOrError}
+            muted={isSmallDevice}
             width="100%"
             height="100%"
             light={isLightMode}
