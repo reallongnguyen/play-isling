@@ -2,9 +2,10 @@
 
 import { useSprings, animated } from '@react-spring/web'
 import { useEffect, useRef } from 'react'
-import { useDrag } from 'react-use-gesture'
+import { useDrag } from '@use-gesture/react'
+import { ReactDOMAttributes } from '@use-gesture/react/dist/declarations/src/types'
 
-const getSongReqStyle =
+const getItemStyle =
   (
     orders: number[],
     itemHeight: number,
@@ -38,19 +39,20 @@ const getSongReqStyle =
 export interface DraggableListProps<T> {
   list: T[]
   getItemId: (item: T) => string | number
-  renderItem: (item: T) => React.ReactNode
+  renderItem: (item: T, attr: ReactDOMAttributes) => React.ReactNode
   itemHeight: number
   changeListOrder?: (newOrder: number[]) => void | Promise<void>
+  dragOnItem?: boolean
 }
 
 export function DraggableList<T>(props: DraggableListProps<T>) {
-  const { list, itemHeight } = props
+  const { list, itemHeight, dragOnItem = true } = props
 
   const orders = useRef(list.map((item, i) => i))
 
   const [springs, api] = useSprings(
     list.length,
-    getSongReqStyle(orders.current, itemHeight),
+    getItemStyle(orders.current, itemHeight),
     [list]
   )
 
@@ -81,7 +83,7 @@ export function DraggableList<T>(props: DraggableListProps<T>) {
       }
 
       api.start(
-        getSongReqStyle(
+        getItemStyle(
           newOrders,
           itemHeight,
           active,
@@ -107,7 +109,7 @@ export function DraggableList<T>(props: DraggableListProps<T>) {
   useEffect(() => {
     orders.current = list.map((item, i) => i)
 
-    api.start(getSongReqStyle(orders.current, itemHeight, false, 0, 0, 0, true))
+    api.start(getItemStyle(orders.current, itemHeight, false, 0, 0, 0, true))
   }, [list, api, itemHeight])
 
   return (
@@ -117,9 +119,9 @@ export function DraggableList<T>(props: DraggableListProps<T>) {
           className="absolute w-full"
           key={props.getItemId(list[index])}
           style={style}
-          {...bind(index)}
+          {...(dragOnItem ? bind(index) : [])}
         >
-          {props.renderItem(list[index])}
+          {props.renderItem(list[index], bind(index))}
         </animated.div>
       ))}
     </>

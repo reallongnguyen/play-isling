@@ -20,7 +20,7 @@ const SongCardSearchResultMobile: FC<SongCardProps> = ({ song }) => {
 
     setTimeout(() => {
       setIsShowResponse(false)
-    }, 1000)
+    }, 2000)
   }
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const SongCardSearchResultMobile: FC<SongCardProps> = ({ song }) => {
         </div>
         <div className="absolute bg-green-700/20 w-full h-full z-20 grid place-items-center transition-all duration-75 invisible group-hover:visible">
           {isShowResponse ? (
-            <IoCheckmarkCircle className="text-5xl text-green-700/60" />
+            <IoCheckmarkCircle className="text-5xl text-green-700/80" />
           ) : (
             <IoAdd className="text-5xl" />
           )}

@@ -24,6 +24,8 @@ import MusicController, {
 } from '../../organisms/MusicController'
 import { DraggableList } from '../../organisms/DraggableList'
 import SongCard from '../../organisms/SongCard'
+import { useResizeObserver } from '@/lib/common/useResizeObserver'
+import { displayMinWidth } from '@/lib/common/html'
 
 const defaultSong = newSong(
   'IOe0tNoUGv8',
@@ -70,6 +72,8 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
   const { toast } = useToast()
   const [songCardHeight, setSongCardHeight] = useState(92)
   const songCardRef = useRef<HTMLDivElement>(null)
+  const { contentRect } = useResizeObserver('app')
+  const isXLargeScreen = contentRect && contentRect.width >= displayMinWidth.xl
 
   const roomId = (params?.id as string) || 'isling'
 
@@ -388,17 +392,20 @@ const PlaylistBox: FC<PlaylistBoxProps> = ({
             list={playlist.list}
             changeListOrder={handleChangePlaylistOrder}
             getItemId={(item) => item.id}
-            renderItem={(item) => (
+            renderItem={(item, attr) => (
               <div className="px-2 lg:px-4">
                 <SongCard
+                  className="select-none touch-pan-y"
                   songRequest={item}
                   isCurSong={curSongReq?.id === item.id}
                   play={() => playBySongReqId(item.id)}
                   remove={() => removeSongRequest(item.id)}
+                  dragAttr={attr}
                 />
               </div>
             )}
             itemHeight={songCardHeight}
+            dragOnItem={isXLargeScreen}
           />
           <div
             className="h-[88px] w-full absolute"

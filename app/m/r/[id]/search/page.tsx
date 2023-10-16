@@ -29,6 +29,7 @@ import SongCardSearchResultMobile from '@/components/organisms/SongCardSearchRes
 const youtubeVideoURLRegex =
   /^(?:(?:https:\/\/)?(?:www.)?youtube.com\/watch\?v=(.*?)(?=&|$).*)|(?:(?:https:\/\/)?(?:.*?)\/(.*?)(?=[?#]|$))/
 
+// TODO: create custom hook to share the search logic between desktop page and mobile page
 const Page = ({ params }: { params: Record<string, string> }) => {
   const playlist = useRecoilValue(playlistStore)
   const { userProfile } = useAccount({ mustLogin: false })

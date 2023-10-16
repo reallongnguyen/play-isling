@@ -58,7 +58,7 @@ export function LoadingHeader() {
 export function LoadingScreen() {
   return (
     <>
-      <div className="fixed top-14 w-screen h-screen z-40 bg-primary">
+      <div className="fixed top-12 lg:top-14 w-screen h-screen z-40 bg-primary">
         <div className="mt-[9rem] mx-4 lg:mx-16 xl:mx-40">
           <LoadingSkeleton />
         </div>

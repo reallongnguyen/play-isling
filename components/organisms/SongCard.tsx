@@ -1,10 +1,17 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { FC, MouseEvent, memo, useEffect, useRef, useState } from 'react'
-import { IoPlay, IoSparklesOutline, IoTrash } from 'react-icons/io5'
+import {
+  IoPlay,
+  IoReorderTwoOutline,
+  IoSparklesOutline,
+  IoTrash,
+} from 'react-icons/io5'
 import Image from 'next/image'
 import SongRequest from '@/models/songRequest/SongRequest'
 import { truncateWithEllipsis } from '@/lib/common/string'
 
 import IconButton from '../atoms/buttons/IconButton'
+import { ReactDOMAttributes } from '@use-gesture/react/dist/declarations/src/types'
 
 export interface SongCardProps {
   songRequest: SongRequest
@@ -12,6 +19,7 @@ export interface SongCardProps {
   play: () => void
   remove: () => void
   className?: string
+  dragAttr?: ReactDOMAttributes
 }
 
 const SongCard: FC<SongCardProps> = ({
@@ -20,6 +28,7 @@ const SongCard: FC<SongCardProps> = ({
   play,
   remove,
   className,
+  dragAttr,
 }) => {
   const [songTitle, setSongTitle] = useState(songRequest.song.title)
   const songCardRef = useRef<HTMLDivElement>(null)
@@ -83,7 +92,7 @@ const SongCard: FC<SongCardProps> = ({
             <p className="truncate text-ellipsis">{songRequest.user.name}</p>
           </div>
         </div>
-        <div className="opacity-80 lg:opacity-0 lg:group-hover:opacity-80">
+        <div className="select-none flex justify-between items-center opacity-80 lg:opacity-0 lg:group-hover:opacity-80">
           <div className="flex items-center space-x-2 h-full">
             <IconButton className="scale-90" onClick={preventDefault(play)}>
               <IoPlay />
@@ -92,6 +101,13 @@ const SongCard: FC<SongCardProps> = ({
               <IoTrash />
             </IconButton>
           </div>
+          <IconButton
+            className="scale-90 select-none touch-none mr-4"
+            onClick={preventDefault(() => {})}
+            {...dragAttr}
+          >
+            <IoReorderTwoOutline />
+          </IconButton>
         </div>
       </div>
     </div>
