@@ -61,14 +61,19 @@ const initGuest = async () => {
     isGuest: true,
   }
 
-  await surreal.waitConnected().then(() =>
-    surreal.getConn().create('users', {
-      ...guest,
-      email: undefined,
-      accountId: undefined,
-      guestId: undefined,
-    } as Record<string, unknown>)
-  )
+  await surreal
+    .waitConnected()
+    .then(() =>
+      surreal.getConn().create('users', {
+        ...guest,
+        email: undefined,
+        accountId: undefined,
+        guestId: undefined,
+      } as Record<string, unknown>)
+    )
+    .catch(() => {
+      console.debug('ignore this error')
+    })
 
   localStorage.setItem('isling_play_guestData', JSON.stringify(guest))
 

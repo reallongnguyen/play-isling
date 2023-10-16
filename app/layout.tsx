@@ -31,6 +31,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: PropsWithChildren<unknown>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta
+          name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1, minimal-ui"
+        />
+      </head>
       <body className="dark">
         <Providers>
           <GlobalDialog />
