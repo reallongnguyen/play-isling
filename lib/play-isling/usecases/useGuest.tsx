@@ -71,8 +71,8 @@ const initGuest = async () => {
         guestId: undefined,
       } as Record<string, unknown>)
     )
-    .catch(() => {
-      console.debug('ignore this error')
+    .catch((err) => {
+      console.debug('useGuest: create guest user: ignore error', err)
     })
 
   localStorage.setItem('isling_play_guestData', JSON.stringify(guest))

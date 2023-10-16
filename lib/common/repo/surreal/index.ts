@@ -15,9 +15,18 @@ export const surreal = {
     return surreal.db
   },
   waitConnected() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+      let connectAttemptLeft = 80
+
       const id = setInterval(() => {
         if (!surreal.connected || surreal.db.status !== 0) {
+          connectAttemptLeft -= 1
+
+          if (connectAttemptLeft === 0) {
+            clearInterval(id)
+            reject(new Error('timeout error'))
+          }
+
           return
         }
 
