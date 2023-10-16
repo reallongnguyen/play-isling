@@ -10,12 +10,18 @@ import { IoChevronBackOutline, IoChevronForwardOutline } from 'react-icons/io5'
 import { getElementByScrollOffsetLeft } from '@/lib/common/html'
 
 import IconButtonOutline from '../atoms/buttons/IconButtonOutline'
+import { cn } from '@/lib/utils'
 
 export interface RollProps {
   title?: ReactElement
+  scrollClassName?: string
 }
 
-const Roll: FC<PropsWithChildren<RollProps>> = ({ title, children }) => {
+const Roll: FC<PropsWithChildren<RollProps>> = ({
+  title,
+  children,
+  scrollClassName,
+}) => {
   const [btnEnable, setBtnEnable] = useState({ prev: false, next: false })
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -117,7 +123,10 @@ const Roll: FC<PropsWithChildren<RollProps>> = ({ title, children }) => {
       </div>
       <div
         ref={scrollRef}
-        className="w-full overflow-x-auto flex space-x-3 lg:space-x-6 scrollbar-hide"
+        className={cn(
+          'w-full overflow-x-auto flex space-x-3 lg:space-x-5 xl:space-x-6 scrollbar-hide',
+          scrollClassName
+        )}
       >
         {children}
       </div>

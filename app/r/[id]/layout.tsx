@@ -64,7 +64,7 @@ export default async function RoomLayout(
             <div className="w-screen h-[calc(100vw/16*9+6rem)] lg:relative lg:bottom-auto lg:h-auto lg:w-auto">
               {children}
             </div>
-            <div className="w-full h-[calc(100dvh-100vw/16*9-6rem)] lg:fixed lg:bottom-auto lg:top-[4.5rem] lg:right-6 overflow-hidden lg:rounded-xl lg:h-[calc(100vh-6rem)] lg:w-[26rem]">
+            <div className="w-full h-[calc(100dvh-100vw/16*9-6rem)] lg:fixed lg:bottom-auto lg:top-[4.5rem] lg:right-6 overflow-hidden lg:rounded-xl lg:h-[calc(100dvh-6rem)] lg:w-[26rem]">
               {playlist}
             </div>
           </div>

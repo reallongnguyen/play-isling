@@ -32,7 +32,7 @@ export function LoadingSkeleton() {
   }, [])
 
   return (
-    <div className="w-full overflow-x-hidden flex space-x-3 lg:space-x-6 scrollbar-hide z-[1000]">
+    <div className="w-full overflow-x-hidden flex space-x-3 lg:space-x-5 xl:space-x-6 scrollbar-hide z-[1000]">
       {items.map((id) => (
         <div key={id} className="w-32 lg:w-80">
           <Skeleton className="w-32 lg:w-80 aspect-[1/1.3] lg:aspect-video bg-primary-light rounded" />
@@ -59,7 +59,7 @@ export function LoadingScreen() {
   return (
     <>
       <div className="fixed top-14 w-screen h-screen z-40 bg-primary">
-        <div className="mt-[9rem] mx-4 lg:mx-32">
+        <div className="mt-[9rem] mx-4 lg:mx-16 xl:mx-40">
           <LoadingSkeleton />
         </div>
       </div>
