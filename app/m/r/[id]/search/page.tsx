@@ -143,7 +143,7 @@ const Page = ({ params }: { params: Record<string, string> }) => {
 
   return (
     <>
-      <div ref={scrollRef} className="h-screen w-screen overflow-y-auto">
+      <div ref={scrollRef} className="h-[100dvh] w-screen overflow-y-auto">
         <div className="h-16" />
         <div id="video-placeholder" className="h-0 w-0"></div>
         <div className="space-y-4">

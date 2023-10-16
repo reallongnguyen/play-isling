@@ -140,12 +140,13 @@ function Page({ params }: { params: Record<string, string> }) {
         </div>
       )}
       {contentRect && isSmallDevice && (
-        <div className="relative px-2 w-full h-full flex flex-col justify-end">
+        <div className="relative w-full h-full flex flex-col justify-end">
+          <div className="h-12" />
           <div
             id="video-placeholder"
-            className="fixed bottom-[calc(100vh-100vw/16*9-2rem)] left-0 w-full h-[calc(100vw/16*9)] z-0"
+            className="w-full h-[calc(100vw/16*9)] z-0"
           />
-          <div className="flex items-center justify-between h-16">
+          <div className="px-2 flex items-center justify-between h-12">
             <div className="flex items-center space-x-2 mt-2 z-50">
               {listReaction.map((type) => (
                 <div

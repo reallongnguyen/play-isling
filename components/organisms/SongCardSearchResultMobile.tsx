@@ -39,7 +39,7 @@ const SongCardSearchResultMobile: FC<SongCardProps> = ({ song }) => {
   return (
     <div
       ref={songCardRef}
-      className="grid grid-cols-[auto_1fr] rounded-xl overflow-hidden text-secondary group"
+      className="grid grid-cols-[auto_1fr] gap-3 rounded-xl overflow-hidden text-secondary group"
       onClick={handleClick}
     >
       <div className="w-32 aspect-[16/10] relative overflow-hidden rounded-xl">
@@ -61,16 +61,15 @@ const SongCardSearchResultMobile: FC<SongCardProps> = ({ song }) => {
           unoptimized
         />
       </div>
-      <div className="pl-4 h-full relative">
+      <div className="h-full">
         <div ref={songTitleRef} className="font-light text-sm">
-          {truncateWithEllipsis(songTitle, 100)}
+          {truncateWithEllipsis(songTitle, 50)}
         </div>
         <div className="font-light text-sm text-secondary/50">
-          <p>
-            {truncateWithEllipsis(song.channelTitle, 12)}
-            <span>・</span>
-            {toKMBString(song.viewCount, 1) || 0} views
+          <p className="truncate text-ellipsis">
+            {truncateWithEllipsis(song.channelTitle, 40)}
           </p>
+          <p>{toKMBString(song.viewCount, 1) || 0} views</p>
         </div>
       </div>
     </div>

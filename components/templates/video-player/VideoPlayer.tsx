@@ -154,7 +154,7 @@ function VideoPlayer() {
 
   useEffect(() => {
     isMounted.current = false
-    let attempt = 40
+    let attempt = 300
 
     // set video player position
     const id = setInterval(() => {

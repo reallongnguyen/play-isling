@@ -12,6 +12,7 @@ import { getDisplayName } from '@/lib/account/models/profile'
 import RoomCard from '@/components/organisms/room/room-card'
 import useHome from '@/lib/play-isling/usecases/home/useHome'
 import useGuest from '@/lib/play-isling/usecases/useGuest'
+import { useEffect } from 'react'
 
 function Page() {
   const { userProfile, isLoading, homeData } = useHome()
@@ -25,8 +26,12 @@ function Page() {
     : 'GUEST'
   const avatarUrl = userProfile?.avatarUrl || guestProfile?.avatarUrl
 
+  useEffect(() => {
+    window.scroll({ top: 0 })
+  }, [])
+
   return (
-    <>
+    <div className="h-[100dvh] overflow-auto lg:h-auto">
       {globalLoading && <LoadingHeader />}
       {globalLoading && <LoadingScreen />}
       <header className="fixed h-12 lg:h-14 top-0 left-0 px-2 lg:px-6 w-full bg-primary z-40">
@@ -92,7 +97,7 @@ function Page() {
         </div>
       ))}
       <div className="h-24" />
-    </>
+    </div>
   )
 }
 

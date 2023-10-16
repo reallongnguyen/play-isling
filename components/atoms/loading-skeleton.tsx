@@ -44,7 +44,7 @@ export function LoadingSkeleton() {
 
 export function LoadingHeader() {
   return (
-    <div className="fixed top-0 w-screen h-14 flex justify-between items-center z-50 bg-primary px-6">
+    <div className="fixed top-0 w-screen h-14 flex justify-between items-center z-50 bg-primary px-2 lg:px-6">
       <Link href="/">
         <IslingLogo />
       </Link>
