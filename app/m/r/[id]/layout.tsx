@@ -55,7 +55,10 @@ export default async function RoomLayout(
     const room = roomRes.data
 
     return (
-      <div className="h-screen w-screen lg:h-auto relative bg-primary overflow-hidden">
+      <div
+        id="video-wrapper"
+        className="h-screen w-screen lg:h-auto relative bg-primary overflow-hidden"
+      >
         <header className="fixed h-12 lg:h-14 top-0 left-0 px-2 lg:px-6 w-full bg-primary z-40">
           <RoomHeaderWrapper room={room} isShowRoom />
         </header>

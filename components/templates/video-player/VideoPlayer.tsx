@@ -225,29 +225,37 @@ function VideoPlayer() {
   }, [clonePositionAndClass, playerCtrl])
 
   useEffect(() => {
-    const srcEle = document.getElementById('video-placeholder')
-    const wrapperEle = document.getElementById('video-wrapper')
-
+    let attempt = 400
     const resizeObserver = new ResizeObserver(videoPlaceholderSizeChange)
 
-    Object.values({
-      srcEle,
-      wrapperEle,
-    }).forEach((ele) => {
-      if (ele) {
-        resizeObserver.observe(ele)
-      }
-    })
+    const id = setInterval(() => {
+      const srcEle = document.getElementById('video-placeholder')
+      const wrapperEle = document.getElementById('video-wrapper')
 
-    return () => {
+      if (!srcEle) {
+        attempt -= 1
+        if (attempt === 0) {
+          console.info('resize observe video-wrapper: can not find element')
+          clearInterval(id)
+        }
+
+        return
+      }
+
       Object.values({
         srcEle,
         wrapperEle,
       }).forEach((ele) => {
         if (ele) {
-          resizeObserver.unobserve(ele)
+          resizeObserver.observe(ele)
         }
       })
+
+      clearInterval(id)
+    }, 50)
+
+    return () => {
+      resizeObserver.disconnect()
     }
   }, [videoPlaceholderSizeChange, pathName])
 
