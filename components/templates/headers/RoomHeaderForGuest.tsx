@@ -106,7 +106,7 @@ const RoomHeaderForGuest: FC<RoomHeaderForGuestProps> = ({
             <Link href={backBtn.url} className="cursor-pointer">
               <div className="flex items-center space-x-0 group text-blue-300 min-w-[2rem]">
                 <IoChevronBack className="text-2xl group-hover:brightness-75 group-active:scale-95" />
-                <div className="truncate text-ellipsis font-light group-hover:brightness-75 text-sm hidden xl:block">
+                <div className="truncate text-ellipsis font-light group-hover:brightness-75 text-sm block">
                   {backBtn.title}
                 </div>
               </div>

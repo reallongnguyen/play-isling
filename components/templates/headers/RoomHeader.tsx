@@ -1,5 +1,12 @@
 'use client'
-import { FC, KeyboardEventHandler, useEffect, useRef, useState } from 'react'
+import {
+  FC,
+  KeyboardEventHandler,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import {
   IoChevronBack,
   IoClose,
@@ -22,6 +29,13 @@ import { UserDropdownContent } from './UserDropdownContent'
 import Profile, { getDisplayName } from '@/lib/account/models/profile'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/atoms/button'
+import { Toggle } from '@/components/atoms/toggle'
+import { LuQrCode } from 'react-icons/lu'
+import { QRCodeCanvas } from 'qrcode.react'
+import { animated, useSpring } from 'react-spring'
+import { useDrag, useGesture } from '@use-gesture/react'
+
+const webURL = process.env.NEXT_PUBLIC_WEBSITE_URL || ''
 
 export interface RoomHeaderProps {
   room?: Room
@@ -49,6 +63,22 @@ const RoomHeader: FC<RoomHeaderProps> = ({
   const router = useRouter()
   const path = usePathname()
   const mode = searchParam.get('mode') || 'master'
+
+  // QR
+  const [isShowQR, setIsShowQR] = useState(false)
+  const [{ top, left }, api] = useSpring(() => ({
+    top: window.innerHeight / 2,
+    left: window.innerWidth / 2,
+  }))
+  const bind = useDrag(({ xy: [x, y] }) => {
+    api.start({ top: y, left: x })
+  })
+  const qrURL = useMemo(() => {
+    const url = new URL(webURL + path)
+    url.searchParams.set('mode', 'silent')
+
+    return url.toString()
+  }, [path])
 
   const handleChangeKeyword = (value: string) => {
     setKeyword(value)
@@ -105,6 +135,26 @@ const RoomHeader: FC<RoomHeaderProps> = ({
 
   return (
     <>
+      {isShowQR && (
+        <animated.div
+          className="fixed -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+          {...bind()}
+          style={{
+            top: top,
+            left: left,
+          }}
+        >
+          <QRCodeCanvas
+            className="border-4 border-white rounded"
+            size={window.innerHeight * 0.4}
+            value={qrURL}
+            title={room?.name}
+          />
+          <div className="text-3xl mt-4">
+            Want to add new songs? Scan QR now!
+          </div>
+        </animated.div>
+      )}
       <div className="hidden lg:flex fixed z-[999] left-1/2 -translate-x-1/2 h-14 justify-center items-center text-secondary">
         <div className="w-[34rem] rounded-full border border-primary-light flex items-center pr-2">
           <input
@@ -128,33 +178,41 @@ const RoomHeader: FC<RoomHeaderProps> = ({
             <Link href={backBtn.url} className="cursor-pointer">
               <div className="flex items-center space-x-0 group text-blue-300 h-full min-w-[2rem]">
                 <IoChevronBack className="text-2xl group-hover:brightness-75 group-active:scale-95" />
-                <div className="truncate text-ellipsis font-light group-hover:brightness-75 text-sm hidden xl:block">
+                <div className="truncate text-ellipsis font-light group-hover:brightness-75 text-sm block">
                   {backBtn.title}
                 </div>
               </div>
             </Link>
           )}
-          {isShowRoom && (
-            <Button
-              variant="default"
-              className={`
+          <div className="flex items-center space-x-2">
+            {isShowRoom && (
+              <Button
+                variant="default"
+                className={`
                 h-8
                 ${mode === 'silent' ? 'bg-orange-900' : 'bg-sky-900'}
               `}
-              onClick={changeRoomMode}
-            >
-              <div className="flex items-center">
-                {mode === 'silent' ? (
-                  <IoVolumeMute className="text-lg text-secondary/80 mr-2" />
-                ) : (
-                  <IoVolumeHigh className="text-lg text-secondary/80 mr-2" />
-                )}
-                <div className="max-w-[80px] lg:max-w-[130px] truncate">
-                  {room?.name}
+                onClick={changeRoomMode}
+              >
+                <div className="flex items-center">
+                  {mode === 'silent' ? (
+                    <IoVolumeMute className="text-lg text-secondary/80 mr-2" />
+                  ) : (
+                    <IoVolumeHigh className="text-lg text-secondary/80 mr-2" />
+                  )}
+                  <div className="max-w-[80px] lg:max-w-[130px] truncate">
+                    {room?.name}
+                  </div>
                 </div>
-              </div>
-            </Button>
-          )}
+              </Button>
+            )}
+            <Toggle
+              pressed={isShowQR}
+              onPressedChange={(press) => setIsShowQR(press)}
+            >
+              <LuQrCode className="text-2xl" />
+            </Toggle>
+          </div>
         </div>
         <div className="flex items-center h-full space-x-3 lg:space-x-6">
           <DropdownMenu>
