@@ -5,6 +5,8 @@ import { Room } from '../models/Room'
 import { Collection } from '@/lib/common/models/collections'
 import { HomeDTO } from '../models/dto/home-dto'
 import { CreateAction } from '../models/dto/action'
+import { getToken } from '@/lib/account/repo/token'
+import { getGuestLocalStorage } from './guest'
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL
 
@@ -64,12 +66,23 @@ export async function getHomeGuest() {
 }
 
 export async function createUserActivity(action: CreateAction) {
+  const token = getToken()
+  let guestId: string | undefined
+
+  if (!token) {
+    const guest = getGuestLocalStorage()
+    guestId = guest?.guestId
+  }
+
   return axios
     .post(
       '/v1/tracking/user-activities',
       { ...action, app: action.app || 'play' },
       {
         baseURL: apiURL,
+        headers: {
+          'X-Guest-ID': guestId,
+        },
       }
     )
     .then((data) => data.data)

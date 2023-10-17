@@ -4,6 +4,7 @@ import { Gender } from '@/lib/account/models/profile'
 import { randomBase56 } from '@/lib/utils'
 import { surreal } from '@/lib/common/repo/surreal'
 import { Guest } from '../models/Guest'
+import { getGuestLocalStorage, setGuestLocalStorage } from '../repo/guest'
 
 const characters = [
   'Gorilla',
@@ -75,7 +76,7 @@ const initGuest = async () => {
       console.debug('useGuest: create guest user: ignore error', err)
     })
 
-  localStorage.setItem('isling_play_guestData', JSON.stringify(guest))
+  setGuestLocalStorage(guest)
 
   return guest
 }
@@ -88,13 +89,7 @@ function useGuest() {
   const isGuest = typeof userProfile === 'undefined'
 
   const getGuestData = useCallback(() => {
-    const guestData = localStorage.getItem('isling_play_guestData')
-
-    if (!guestData) {
-      return undefined
-    }
-
-    return JSON.parse(guestData) as Guest
+    return getGuestLocalStorage()
   }, [])
 
   const createGuest = useCallback(async () => {
