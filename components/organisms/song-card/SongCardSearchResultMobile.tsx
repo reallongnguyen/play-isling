@@ -9,7 +9,8 @@ export interface SongCardProps {
   song: Song
 }
 
-const SongCardSimple: FC<SongCardProps> = ({ song }) => {
+// TODO: write custom hook to share the logic with SongCardSimple.tsx
+const SongCardSearchResultMobile: FC<SongCardProps> = ({ song }) => {
   const [songTitle, setSongTitle] = useState(song.title)
   const songCardRef = useRef<HTMLDivElement>(null)
   const songTitleRef = useRef<HTMLDivElement>(null)
@@ -20,7 +21,7 @@ const SongCardSimple: FC<SongCardProps> = ({ song }) => {
 
     setTimeout(() => {
       setIsShowResponse(false)
-    }, 1000)
+    }, 8000)
   }
 
   useEffect(() => {
@@ -39,16 +40,16 @@ const SongCardSimple: FC<SongCardProps> = ({ song }) => {
   return (
     <div
       ref={songCardRef}
-      className="grid grid-cols-[auto_1fr] rounded-xl overflow-hidden text-secondary group"
+      className="grid grid-cols-[auto_1fr] gap-3 rounded-xl overflow-hidden text-secondary group"
       onClick={handleClick}
     >
-      <div className="w-80 aspect-[16/10] relative overflow-hidden rounded-xl">
+      <div className="w-32 aspect-[16/10] relative overflow-hidden rounded-xl">
         <div className="absolute bottom-2 right-2 px-1 py-0.5 z-10 bg-black/60 rounded text-xs font-semibold">
           {song.duration}
         </div>
         <div className="absolute bg-green-700/20 w-full h-full z-20 grid place-items-center transition-all duration-75 invisible group-hover:visible">
           {isShowResponse ? (
-            <IoCheckmarkCircle className="text-5xl text-green-700/60" />
+            <IoCheckmarkCircle className="text-5xl text-green-700/80" />
           ) : (
             <IoAdd className="text-5xl" />
           )}
@@ -61,23 +62,19 @@ const SongCardSimple: FC<SongCardProps> = ({ song }) => {
           unoptimized
         />
       </div>
-      <div className="pl-4 h-full relative">
-        <div ref={songTitleRef} className="font-light text-lg">
-          {truncateWithEllipsis(songTitle, 150)}
+      <div className="h-full">
+        <div ref={songTitleRef} className="font-light text-sm">
+          {songTitle}
         </div>
-        <div className="flex space-x-4 font-light text-sm text-secondary/50">
-          <p>{toKMBString(song.viewCount) || 0} views</p>
-          <p>{toKMBString(song.likeCount) || 0} likes</p>
-        </div>
-        <div className="font-semibold text-sm text-secondary/50 mt-3">
-          {truncateWithEllipsis(song.channelTitle, 50)}
-        </div>
-        <div className="font-light text-sm text-secondary/50 mt-3">
-          {truncateWithEllipsis(song.description, 90)}
+        <div className="font-light text-sm text-secondary/50">
+          <p className="truncate text-ellipsis">
+            {truncateWithEllipsis(song.channelTitle, 40)}
+          </p>
+          <p>{toKMBString(song.viewCount, 1) || 0} views</p>
         </div>
       </div>
     </div>
   )
 }
 
-export default SongCardSimple
+export default SongCardSearchResultMobile

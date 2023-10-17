@@ -24,7 +24,7 @@ import useGuest from '@/lib/play-isling/usecases/useGuest'
 import { getDisplayName } from '@/lib/account/models/profile'
 import IconButton from '@/components/atoms/buttons/IconButton'
 import { IoClose } from 'react-icons/io5'
-import SongCardSearchResultMobile from '@/components/organisms/SongCardSearchResultMobile'
+import SongCardSearchResultMobile from '@/components/organisms/song-card/SongCardSearchResultMobile'
 
 const youtubeVideoURLRegex =
   /^(?:(?:https:\/\/)?(?:www.)?youtube.com\/watch\?v=(.*?)(?=&|$).*)|(?:(?:https:\/\/)?(?:.*?)\/(.*?)(?=[?#]|$))/

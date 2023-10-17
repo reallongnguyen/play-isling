@@ -10,7 +10,7 @@ import Image from 'next/image'
 import SongRequest from '@/models/songRequest/SongRequest'
 import { truncateWithEllipsis } from '@/lib/common/string'
 
-import IconButton from '../atoms/buttons/IconButton'
+import IconButton from '../../atoms/buttons/IconButton'
 import { ReactDOMAttributes } from '@use-gesture/react/dist/declarations/src/types'
 
 export interface SongCardProps {

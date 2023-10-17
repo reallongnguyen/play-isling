@@ -56,8 +56,16 @@ export function DraggableList<T>(props: DraggableListProps<T>) {
     [list]
   )
 
+  const lastDrag = useRef<Record<string, any>>({})
+
   const bind = useDrag(
-    ({ args: [dragItemOrgIndex], active, movement: [, y] }) => {
+    ({
+      args: [dragItemOrgIndex],
+      active,
+      movement: [, y],
+      dragging,
+      cancel,
+    }) => {
       const curIndex = orders.current.findIndex(
         (item) => item === dragItemOrgIndex
       )
@@ -103,8 +111,35 @@ export function DraggableList<T>(props: DraggableListProps<T>) {
           }
         }, 600)
       }
+
+      lastDrag.current = {
+        cancel,
+        dragging,
+        timeStamp: Date.now(),
+      }
     }
   )
+
+  // FIXME: hot fix bug long-press on chrome for iphone
+  // It may be make conflict with other feature
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (!lastDrag.current.dragging) {
+        return
+      }
+
+      if (
+        Date.now() - lastDrag.current.timeStamp > 5000 &&
+        lastDrag.current.cancel
+      ) {
+        lastDrag.current.cancel()
+      }
+    }, 500)
+
+    return () => {
+      clearInterval(id)
+    }
+  }, [])
 
   useEffect(() => {
     orders.current = list.map((item, i) => i)

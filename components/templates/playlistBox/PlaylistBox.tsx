@@ -23,7 +23,7 @@ import MusicController, {
   MusicControllerOptions,
 } from '../../organisms/MusicController'
 import { DraggableList } from '../../organisms/DraggableList'
-import SongCard from '../../organisms/SongCard'
+import SongCard from '../../organisms/song-card/SongCard'
 import { useResizeObserver } from '@/lib/common/useResizeObserver'
 import { displayMinWidth } from '@/lib/common/html'
 
