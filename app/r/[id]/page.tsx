@@ -144,7 +144,7 @@ function Page({ params }: { params: Record<string, string> }) {
           <div className="h-12" />
           {mode === 'silent' && (
             <div className="grid grid-cols-[auto_1fr] px-2 gap-2 mt-4">
-              <div id="video-placeholder" className="w-20 h-20 z-0" />
+              <div id="video-placeholder" className="h-20 aspect-video z-0" />
               <div className="">
                 <p className="font-light">{curSongReq?.song.title}</p>
               </div>

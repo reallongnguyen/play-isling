@@ -142,7 +142,7 @@ const RoomHeader: FC<RoomHeaderProps> = ({ room, backBtn, isShowRoom }) => {
     <>
       {isShowQR && (
         <animated.div
-          className="fixed -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-20"
+          className="fixed -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-20 touch-none"
           {...bind()}
           style={{
             top: top,
@@ -155,7 +155,9 @@ const RoomHeader: FC<RoomHeaderProps> = ({ room, backBtn, isShowRoom }) => {
             value={qrURL}
             title={room?.name}
           />
-          <div className="text-3xl mt-4">Want to add new songs? Scan now!</div>
+          <div className="text-xl lg:text-2xl mt-4 text-center">
+            Want to add new songs? Scan now!
+          </div>
         </animated.div>
       )}
       <div className="hidden lg:flex fixed z-[999] left-1/2 -translate-x-1/2 h-14 justify-center items-center text-secondary">
