@@ -26,7 +26,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/avatar'
 
 import IconButton from '../../atoms/buttons/IconButton'
 import { UserDropdownContent } from './UserDropdownContent'
-import Profile, { getDisplayName } from '@/lib/account/models/profile'
+import { getDisplayName } from '@/lib/account/models/profile'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/atoms/button'
 import { Toggle } from '@/components/atoms/toggle'
@@ -34,6 +34,8 @@ import { LuQrCode } from 'react-icons/lu'
 import { QRCodeCanvas } from 'qrcode.react'
 import { animated, useSpring } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
+import useAccount from '@/lib/account/useAccount'
+import useGuest from '@/lib/play-isling/usecases/useGuest'
 
 const webURL = process.env.NEXT_PUBLIC_WEBSITE_URL || ''
 
@@ -44,15 +46,9 @@ export interface RoomHeaderProps {
     title: string
   }
   isShowRoom?: boolean
-  userProfile: Profile
 }
 
-const RoomHeader: FC<RoomHeaderProps> = ({
-  room,
-  backBtn,
-  isShowRoom,
-  userProfile,
-}) => {
+const RoomHeader: FC<RoomHeaderProps> = ({ room, backBtn, isShowRoom }) => {
   const [searchQuery, setSearchQuery] = useRecoilState(searchVideoQueryStore)
   const [keyword, setKeyword] = useState<string>(searchQuery)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,6 +59,15 @@ const RoomHeader: FC<RoomHeaderProps> = ({
   const router = useRouter()
   const path = usePathname()
   const mode = searchParam.get('mode') || 'master'
+  const { userProfile } = useAccount()
+  const { guestProfile } = useGuest()
+
+  const avatarURL = userProfile?.avatarUrl || guestProfile?.avatarUrl
+  const displayName = userProfile
+    ? getDisplayName(userProfile)
+    : guestProfile
+    ? getDisplayName(guestProfile)
+    : 'Guest'
 
   // QR
   const [isShowQR, setIsShowQR] = useState(false)
@@ -137,7 +142,7 @@ const RoomHeader: FC<RoomHeaderProps> = ({
     <>
       {isShowQR && (
         <animated.div
-          className="fixed -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+          className="fixed -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-20"
           {...bind()}
           style={{
             top: top,
@@ -150,9 +155,7 @@ const RoomHeader: FC<RoomHeaderProps> = ({
             value={qrURL}
             title={room?.name}
           />
-          <div className="text-3xl mt-4">
-            Want to add new songs? Scan QR now!
-          </div>
+          <div className="text-3xl mt-4">Want to add new songs? Scan now!</div>
         </animated.div>
       )}
       <div className="hidden lg:flex fixed z-[999] left-1/2 -translate-x-1/2 h-14 justify-center items-center text-secondary">
@@ -218,11 +221,9 @@ const RoomHeader: FC<RoomHeaderProps> = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="cursor-pointer">
-                <AvatarImage src={userProfile.avatarUrl} />
+                <AvatarImage src={avatarURL} />
                 <AvatarFallback>
-                  <div className="text-sm">
-                    {getAvatarString(getDisplayName(userProfile))}
-                  </div>
+                  <div className="text-sm">{getAvatarString(displayName)}</div>
                 </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>

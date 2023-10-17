@@ -140,13 +140,23 @@ function Page({ params }: { params: Record<string, string> }) {
         </div>
       )}
       {contentRect && isSmallDevice && (
-        <div className="relative w-full h-full flex flex-col justify-end">
+        <div className="relative w-full h-full">
           <div className="h-12" />
-          <div
-            id="video-placeholder"
-            className="w-full h-[calc(100vw/16*9)] z-0"
-          />
-          <div className="px-2 flex items-center justify-between h-12">
+          {mode === 'silent' && (
+            <div className="grid grid-cols-[auto_1fr] px-2 gap-2 mt-4">
+              <div id="video-placeholder" className="w-20 h-20 z-0" />
+              <div className="">
+                <p className="font-light">{curSongReq?.song.title}</p>
+              </div>
+            </div>
+          )}
+          {mode !== 'silent' && (
+            <div
+              id="video-placeholder"
+              className="w-full h-[calc(100vw/16*9)] z-0"
+            />
+          )}
+          <div className="absolute bottom-0 w-full px-2 flex items-center justify-between h-12">
             <div className="flex items-center space-x-2 mt-2 z-50">
               {listReaction.map((type) => (
                 <div
