@@ -56,6 +56,7 @@ export function DraggableList<T>(props: DraggableListProps<T>) {
     [list]
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const lastDrag = useRef<Record<string, any>>({})
 
   const bind = useDrag(

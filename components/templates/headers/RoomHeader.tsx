@@ -33,7 +33,7 @@ import { Toggle } from '@/components/atoms/toggle'
 import { LuQrCode } from 'react-icons/lu'
 import { QRCodeCanvas } from 'qrcode.react'
 import { animated, useSpring } from 'react-spring'
-import { useDrag, useGesture } from '@use-gesture/react'
+import { useDrag } from '@use-gesture/react'
 
 const webURL = process.env.NEXT_PUBLIC_WEBSITE_URL || ''
 
