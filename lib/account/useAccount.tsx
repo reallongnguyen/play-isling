@@ -15,7 +15,7 @@ const defaultConfig: UseAccountProps = {
   mustLogin: false,
 }
 
-export default function useAccount(orgProps: UseAccountProps) {
+export default function useAccount(orgProps?: UseAccountProps) {
   const props = Object.assign({}, defaultConfig, orgProps)
   const { mustLogin } = props
   const [hasToken, setHasToken] = useState(false)
