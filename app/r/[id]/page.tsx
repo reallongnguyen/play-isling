@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useMemo } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { searchVideoQueryStore } from '@/stores/search'
 import ReactionIcon from '@com/atoms/ReactionIcon'
 import { ReactionType } from '@/models/Reaction'
@@ -22,6 +22,7 @@ import { Button } from '@/components/atoms/button'
 import { IoAdd } from 'react-icons/io5'
 import { useResizeObserver } from '@/lib/common/useResizeObserver'
 import { displayMinWidth } from '@/lib/common/html'
+import { roomLayoutStore } from '@/stores/room'
 
 const listReaction: ReactionType[] = [
   'haha',
@@ -43,6 +44,7 @@ function Page({ params }: { params: Record<string, string> }) {
   const { logUserActivity } = useTrackingRoom(room?.id)
   const query = useSearchParams()
   const mode = query.get('mode') || 'master'
+  const [layout] = useRecoilState(roomLayoutStore)
 
   const { contentRect } = useResizeObserver('app')
   const isSmallDevice = contentRect && contentRect.width < displayMinWidth.lg
@@ -74,53 +76,104 @@ function Page({ params }: { params: Record<string, string> }) {
     }
   }, [searchQuery, router, searchPageURL])
 
+  // TODO: the layout is ugly
   return (
     <>
       {isLoadingAuth && <LoadingHeader />}
       {isLoadingAuth && <LoadingScreen />}
       {contentRect && !isSmallDevice && (
-        <div className="block lg:pl-6 lg:pr-[29rem]">
-          <div className="h-12 lg:h-[4.5rem]" />
-          <div
-            className={`${
-              mode === 'silent' ? 'grid grid-cols-3 gap-12 mb-10' : ''
-            }`}
-          >
-            <div
-              id="video-placeholder"
-              className="overflow-hidden lg:rounded-sm aspect-[3/2] lg:aspect-video lg:w-full"
-            />
-            <div
-              className={`
-              ${
-                mode === 'silent'
-                  ? 'col-span-2'
-                  : 'grid grid-cols-[1fr_auto] gap-4'
-              }
-              text-secondary
-            `}
-            >
-              <div className="mt-3 text-xl text-secondary">
-                {curSongReq?.song.title}
-              </div>
-              <div className="flex space-x-4 items-center h-12">
-                {listReaction.map((type) => (
-                  <div
-                    key={type}
-                    onClick={handleReaction(type as ReactionType)}
-                    className="w-8 h-8 cursor-pointer hover:w-12 hover:h-12 transition-all duration-700 group"
-                  >
-                    <ReactionIcon
-                      type={type as ReactionType}
-                      className="group-active:scale-110 transition-all duration-100"
-                    />
+        <>
+          {layout !== 'fullScreen' && mode === 'silent' && (
+            <div className="lg:px-6">
+              <div className="h-12 lg:h-[4.5rem]" />
+              <div className="grid grid-cols-3 gap-12 mb-10">
+                <div
+                  id="video-placeholder"
+                  className="overflow-hidden lg:rounded-sm aspect-[3/2] lg:aspect-video lg:w-full"
+                />
+                <div className="col-span-2 text-secondary">
+                  <div className="mt-3 text-xl text-secondary">
+                    {curSongReq?.song.title}
                   </div>
-                ))}
+                  <div className="flex space-x-4 items-center h-12">
+                    {listReaction.map((type) => (
+                      <div
+                        key={type}
+                        onClick={handleReaction(type as ReactionType)}
+                        className="w-8 h-8 cursor-pointer hover:w-12 hover:h-12 transition-all duration-700 group"
+                      >
+                        <ReactionIcon
+                          type={type as ReactionType}
+                          className="group-active:scale-110 transition-all duration-100"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          )}
+          {layout !== 'fullScreen' && mode !== 'silent' && (
+            <div className="lg:px-6">
+              <div className="h-12 lg:h-[4.5rem]" />
+              <div>
+                <div
+                  id="video-placeholder"
+                  className="overflow-hidden lg:rounded-sm aspect-[3/2] lg:aspect-video lg:w-full"
+                />
+                <div className="grid grid-cols-[1fr_auto] gap-4 text-secondary">
+                  <div className="mt-3 text-xl text-secondary">
+                    {curSongReq?.song.title}
+                  </div>
+                  <div className="flex space-x-4 items-center h-12">
+                    {listReaction.map((type) => (
+                      <div
+                        key={type}
+                        onClick={handleReaction(type as ReactionType)}
+                        className="w-8 h-8 cursor-pointer hover:w-12 hover:h-12 transition-all duration-700 group"
+                      >
+                        <ReactionIcon
+                          type={type as ReactionType}
+                          className="group-active:scale-110 transition-all duration-100"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {layout === 'fullScreen' && (
+            <>
+              <div className="w-[calc(100vh*16/9)] mx-auto">
+                <div
+                  id="video-placeholder"
+                  className="overflow-hidden aspect-[3/2] lg:aspect-video lg:w-full"
+                />
+              </div>
+              <div className="grid grid-cols-[1fr_auto] gap-4 text-secondary px-6">
+                <div className="mt-3 text-xl text-secondary">
+                  {curSongReq?.song.title}
+                </div>
+                <div className="flex space-x-4 items-center h-12">
+                  {listReaction.map((type) => (
+                    <div
+                      key={type}
+                      onClick={handleReaction(type as ReactionType)}
+                      className="w-8 h-8 cursor-pointer hover:w-12 hover:h-12 transition-all duration-700 group"
+                    >
+                      <ReactionIcon
+                        type={type as ReactionType}
+                        className="group-active:scale-110 transition-all duration-100"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
           {audiences.length > 0 && (
-            <div className="grid grid-cols-5 lg:grid-cols-8 gap-4 mt-8">
+            <div className="grid grid-cols-5 lg:grid-cols-8 gap-4 mt-8 lg:px-6">
               {audiences.map((user) => (
                 <div key={user.id} className="flex flex-col items-center">
                   <Avatar className="w-16 h-16">
@@ -137,7 +190,7 @@ function Page({ params }: { params: Record<string, string> }) {
             </div>
           )}
           <div className="h-24" />
-        </div>
+        </>
       )}
       {contentRect && isSmallDevice && (
         <div className="relative w-full h-full">

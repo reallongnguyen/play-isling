@@ -1,12 +1,5 @@
 'use client'
-import {
-  FC,
-  KeyboardEventHandler,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { FC, KeyboardEventHandler, useEffect, useRef, useState } from 'react'
 import {
   IoChevronBack,
   IoClose,
@@ -30,14 +23,10 @@ import { getDisplayName } from '@/lib/account/models/profile'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/atoms/button'
 import { Toggle } from '@/components/atoms/toggle'
-import { LuQrCode } from 'react-icons/lu'
-import { QRCodeCanvas } from 'qrcode.react'
-import { animated, useSpring } from 'react-spring'
-import { useDrag } from '@use-gesture/react'
+import { LuQrCode, LuScan } from 'react-icons/lu'
 import useAccount from '@/lib/account/useAccount'
 import useGuest from '@/lib/play-isling/usecases/useGuest'
-
-const webURL = process.env.NEXT_PUBLIC_WEBSITE_URL || ''
+import { isShowQRStore, roomLayoutStore } from '@/stores/room'
 
 export interface RoomHeaderProps {
   room?: Room
@@ -61,6 +50,7 @@ const RoomHeader: FC<RoomHeaderProps> = ({ room, backBtn, isShowRoom }) => {
   const mode = searchParam.get('mode') || 'master'
   const { userProfile } = useAccount()
   const { guestProfile } = useGuest()
+  const [roomLayout, setRoomLayout] = useRecoilState(roomLayoutStore)
 
   const avatarURL = userProfile?.avatarUrl || guestProfile?.avatarUrl
   const displayName = userProfile
@@ -70,20 +60,7 @@ const RoomHeader: FC<RoomHeaderProps> = ({ room, backBtn, isShowRoom }) => {
     : 'Guest'
 
   // QR
-  const [isShowQR, setIsShowQR] = useState(false)
-  const [{ top, left }, api] = useSpring(() => ({
-    top: window.innerHeight / 2,
-    left: window.innerWidth / 2,
-  }))
-  const bind = useDrag(({ xy: [x, y] }) => {
-    api.start({ top: y, left: x })
-  })
-  const qrURL = useMemo(() => {
-    const url = new URL(webURL + path)
-    url.searchParams.set('mode', 'silent')
-
-    return url.toString()
-  }, [path])
+  const [isShowQR, setIsShowQR] = useRecoilState(isShowQRStore)
 
   const handleChangeKeyword = (value: string) => {
     setKeyword(value)
@@ -140,26 +117,6 @@ const RoomHeader: FC<RoomHeaderProps> = ({ room, backBtn, isShowRoom }) => {
 
   return (
     <>
-      {isShowQR && (
-        <animated.div
-          className="fixed -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-20 touch-none"
-          {...bind()}
-          style={{
-            top: top,
-            left: left,
-          }}
-        >
-          <QRCodeCanvas
-            className="border-4 border-white rounded"
-            size={window.innerHeight * 0.4}
-            value={qrURL}
-            title={room?.name}
-          />
-          <div className="text-xl lg:text-2xl mt-4 text-center">
-            Want to add new songs? Scan now!
-          </div>
-        </animated.div>
-      )}
       <div className="hidden lg:flex fixed z-[999] left-1/2 -translate-x-1/2 h-14 justify-center items-center text-secondary">
         <div className="w-[34rem] rounded-full border border-primary-light flex items-center pr-2">
           <input
@@ -216,6 +173,16 @@ const RoomHeader: FC<RoomHeaderProps> = ({ room, backBtn, isShowRoom }) => {
               onPressedChange={(press) => setIsShowQR(press)}
             >
               <LuQrCode className="text-2xl" />
+            </Toggle>
+            <Toggle
+              pressed={roomLayout === 'fullScreen'}
+              onPressedChange={() =>
+                setRoomLayout((val) =>
+                  val === 'fullScreen' ? 'default' : 'fullScreen'
+                )
+              }
+            >
+              <LuScan className="text-2xl" />
             </Toggle>
           </div>
         </div>

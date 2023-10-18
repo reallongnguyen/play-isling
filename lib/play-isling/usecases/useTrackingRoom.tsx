@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { createUserActivity } from '../repo/api'
+import { createUserActivity, logCCU } from '../repo/api'
 import { useEffect, useRef } from 'react'
 
 export default function useTrackingRoom(roomId?: number) {
@@ -56,6 +56,22 @@ export default function useTrackingRoom(roomId?: number) {
       clearInterval(id)
     }
   }, [mutate, roomId])
+
+  useEffect(() => {
+    if (!roomId) {
+      return
+    }
+
+    logCCU()
+
+    const id = setInterval(() => {
+      logCCU()
+    }, 60 * 1000)
+
+    return () => {
+      clearInterval(id)
+    }
+  }, [roomId])
 
   return {
     logUserActivity: mutate,

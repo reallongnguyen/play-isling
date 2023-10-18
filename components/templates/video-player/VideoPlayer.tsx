@@ -3,7 +3,12 @@ import { useCallback, useEffect, useMemo, useRef } from 'react'
 import ReactPlayer from 'react-player'
 import { useSpring, animated } from '@react-spring/web'
 import { useParams, usePathname, useSearchParams } from 'next/navigation'
-import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil'
+import {
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from 'recoil'
 import { playerEvent } from '@/models/eventEmitter/player'
 import { curSongReqStore, isPlayingStore } from '@/stores/player'
 import {
@@ -18,6 +23,8 @@ import ReactionPool from '@com/templates/ReactionPool'
 import Image from 'next/image'
 import { useResizeObserver } from '@/lib/common/useResizeObserver'
 import { displayMinWidth } from '@/lib/common/html'
+import { isForceShowPlaylistStore, roomLayoutStore } from '@/stores/room'
+import { OnProgressProps } from 'react-player/base'
 
 const youtubeVideoBaseUrl = 'https://www.youtube.com/watch?v='
 const initialPos = {
@@ -47,6 +54,8 @@ function VideoPlayer() {
   const isMounted = useRef(true)
   const { contentRect } = useResizeObserver('app')
   const isSmallDevice = contentRect && contentRect.width < displayMinWidth.lg
+  const roomLayout = useRecoilValue(roomLayoutStore)
+  const setIsForceShowPlaylist = useSetRecoilState(isForceShowPlaylistStore)
 
   const playerRepo = useMemo(() => {
     if (typeof roomId === 'undefined') {
@@ -61,7 +70,11 @@ function VideoPlayer() {
     player.current?.seekTo(0)
   }
 
-  const handleVideoEndOrError = () => {
+  const handleVideoEndOrError = (err?: Error) => {
+    if (err) {
+      console.error('VideoPlayer: video error:', err)
+    }
+
     playerEvent.emit('ended')
   }
 
@@ -73,6 +86,17 @@ function VideoPlayer() {
   const onPause = () => {
     console.log('onPause')
     setIsPlaying(false)
+  }
+
+  const handleProgress = (state: OnProgressProps) => {
+    if (
+      state.playedSeconds / state.played - state.playedSeconds <= 5 ||
+      state.playedSeconds <= 10
+    ) {
+      setIsForceShowPlaylist(true)
+    } else {
+      setIsForceShowPlaylist(false)
+    }
   }
 
   const clonePositionAndClass = useCallback(
@@ -273,6 +297,11 @@ function VideoPlayer() {
       <animated.div ref={playerRef} style={playerProps}>
         {curSongReq && mode !== 'silent' && (
           <ReactPlayer
+            style={{
+              // set pointerEvents none to catch mouse movement on fullScreen mode
+              pointerEvents: roomLayout === 'fullScreen' ? 'none' : 'auto',
+              touchAction: roomLayout === 'fullScreen' ? 'none' : 'auto',
+            }}
             ref={player}
             url={youtubeVideoBaseUrl + curSongReq.song.id}
             playing={isPlaying}
@@ -286,6 +315,7 @@ function VideoPlayer() {
             width="100%"
             height="100%"
             light={isLightMode}
+            onProgress={handleProgress}
           />
         )}
         {curSongReq && mode === 'silent' && (

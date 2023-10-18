@@ -4,6 +4,7 @@ import { PropsWithChildren, ReactNode } from 'react'
 import { notFound } from 'next/navigation'
 import RoomHeaderWrapper from './_components/RoomHeaderWrapper'
 import { getRoom } from '@/lib/play-isling/repo/api'
+import PlayerLayout from './_components/Layout'
 
 const websiteURL = process.env.NEXT_PUBLIC_WEBSITE_URL
 
@@ -11,6 +12,7 @@ export async function generateMetadata({
   params,
 }: {
   params: Record<string, string>
+  playlist: ReactNode
 }): Promise<Metadata> {
   try {
     const roomRes = await getRoom(params.id)()
@@ -55,23 +57,13 @@ export default async function RoomLayout(
     const room = roomRes.data
 
     return (
-      <div>
-        <div
-          id="video-wrapper"
-          className="h-[100dvh] lg:h-auto relative bg-primary"
+      <div className="h-[100dvh] lg:h-auto relative bg-primary">
+        <PlayerLayout
+          playlist={playlist}
+          header={<RoomHeaderWrapper room={room} isShowRoom />}
         >
-          <header className="fixed h-12 lg:h-14 top-0 left-0 px-2 lg:px-6 w-full bg-primary z-40">
-            <RoomHeaderWrapper room={room} isShowRoom />
-          </header>
-          <div className="grid grid-rows-[auto_1fr] lg:relative">
-            <div className="w-screen h-[calc(100vw/16*9+6rem)] lg:relative lg:bottom-auto lg:h-auto lg:w-auto">
-              {children}
-            </div>
-            <div className="w-full h-[calc(100dvh-100vw/16*9-6rem)] lg:fixed lg:bottom-auto lg:top-[4.5rem] lg:right-6 overflow-hidden lg:rounded-xl lg:h-[calc(100dvh-6rem)] lg:w-[26rem]">
-              {playlist}
-            </div>
-          </div>
-        </div>
+          {children}
+        </PlayerLayout>
       </div>
     )
   } catch (err) {

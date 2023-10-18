@@ -85,7 +85,7 @@ const Page = ({ params }: { params: Record<string, string> }) => {
   }, [searchQuery, setSearchQuery])
 
   return (
-    <div className="pl-6 pr-[32rem] overflow-auto">
+    <div className="pl-6 pr-6 overflow-auto">
       <div className="lg:h-[4.5rem]" />
       <div className="space-y-4">
         {youtubeVideos.map((video) => (

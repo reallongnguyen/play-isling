@@ -11,6 +11,7 @@ export async function generateMetadata({
   params,
 }: {
   params: Record<string, string>
+  playlist: ReactNode
 }): Promise<Metadata> {
   try {
     const roomRes = await getRoom(params.id)()

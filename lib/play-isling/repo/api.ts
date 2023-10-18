@@ -76,7 +76,7 @@ export async function createUserActivity(action: CreateAction) {
 
   return axios
     .post(
-      '/v1/tracking/user-activities',
+      '/tracking/v1/user-activities',
       { ...action, app: action.app || 'play' },
       {
         baseURL: apiURL,
@@ -85,6 +85,26 @@ export async function createUserActivity(action: CreateAction) {
         },
       }
     )
+    .then((data) => data.data)
+    .catch(transformError)
+}
+
+export async function logCCU() {
+  const token = getToken()
+  let guestId: string | undefined
+
+  if (!token) {
+    const guest = getGuestLocalStorage()
+    guestId = guest?.guestId
+  }
+
+  return axios
+    .post('/tracking/v1/ccu-logs', undefined, {
+      baseURL: apiURL,
+      headers: {
+        'X-Guest-ID': guestId,
+      },
+    })
     .then((data) => data.data)
     .catch(transformError)
 }
