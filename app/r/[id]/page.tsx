@@ -145,7 +145,7 @@ function Page({ params }: { params: Record<string, string> }) {
           )}
           {layout === 'fullScreen' && (
             <>
-              <div className="w-[calc(100vh*16/9)] mx-auto">
+              <div className="w-[calc(100dvh*16/9)] mx-auto">
                 <div
                   id="video-placeholder"
                   className="overflow-hidden aspect-[3/2] lg:aspect-video lg:w-full"

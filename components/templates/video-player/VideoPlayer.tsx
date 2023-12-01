@@ -90,8 +90,8 @@ function VideoPlayer() {
 
   const handleProgress = (state: OnProgressProps) => {
     if (
-      state.playedSeconds / state.played - state.playedSeconds <= 5 ||
-      state.playedSeconds <= 10
+      state.playedSeconds / state.played - state.playedSeconds <= 10 ||
+      state.playedSeconds <= 20
     ) {
       setIsForceShowPlaylist(true)
     } else {
