@@ -21,53 +21,53 @@ export default function useAccount(orgProps?: UseAccountProps) {
   const [hasToken, setHasToken] = useState(false)
   const [isTokenLoading, setIsTokenLoading] = useState(true)
 
-  const router = useRouter()
-  const {
-    data: userProfileRes,
-    isLoading,
-    refetch: refetchProfile,
-  } = useQuery<SuccessResponse<Profile>, ErrorResponse>({
-    queryFn: getUserProfile,
-    staleTime: profileCacheTTL, // enable cache
-    queryKey: ['fetchUserProfile'],
-    enabled: hasToken,
-    retry: (fCount, error) => {
-      return fCount < 8 && error.code / 100 >= 5
-    },
-    retryDelay: (failCount) => 100 * 2 ** Math.min(failCount, 9),
-  })
-  const hasAuth = Boolean(userProfileRes) || hasToken
+  // const router = useRouter()
+  // const {
+  //   data: userProfileRes,
+  //   isLoading,
+  //   refetch: refetchProfile,
+  // } = useQuery<SuccessResponse<Profile>, ErrorResponse>({
+  //   queryFn: getUserProfile,
+  //   staleTime: profileCacheTTL, // enable cache
+  //   queryKey: ['fetchUserProfile'],
+  //   enabled: hasToken,
+  //   retry: (fCount, error) => {
+  //     return fCount < 8 && error.code / 100 >= 5
+  //   },
+  //   retryDelay: (failCount) => 100 * 2 ** Math.min(failCount, 9),
+  // })
+  // const hasAuth = Boolean(userProfileRes) || hasToken
 
-  useEffect(() => {
-    const token = getToken()
-    setIsTokenLoading(false)
+  // useEffect(() => {
+  //   const token = getToken()
+  //   setIsTokenLoading(false)
 
-    if (!token && mustLogin) {
-      router.push('/signin')
+  //   if (!token && mustLogin) {
+  //     router.push('/signin')
 
-      return
-    }
+  //     return
+  //   }
 
-    if (token) {
-      setHasToken(true)
-    }
-  }, [mustLogin, router])
+  //   if (token) {
+  //     setHasToken(true)
+  //   }
+  // }, [mustLogin, router])
 
-  useEffect(() => {
-    if (
-      userProfileRes &&
-      userProfileRes.data &&
-      !userProfileRes.data.firstName
-    ) {
-      const nextStep = '/all-done'
-      router.push(`/me/profile/edit?next=${nextStep}`)
-    }
-  }, [router, userProfileRes])
+  // useEffect(() => {
+  //   if (
+  //     userProfileRes &&
+  //     userProfileRes.data &&
+  //     !userProfileRes.data.firstName
+  //   ) {
+  //     const nextStep = '/all-done'
+  //     router.push(`/me/profile/edit?next=${nextStep}`)
+  //   }
+  // }, [router, userProfileRes])
 
   return {
-    hasAuth,
-    userProfile: userProfileRes?.data,
-    isLoading: isTokenLoading || (hasToken && isLoading),
-    refetchProfile,
+    hasAuth: false,
+    userProfile: undefined,
+    isLoading: false,
+    refetchProfile: async () => {},
   }
 }
