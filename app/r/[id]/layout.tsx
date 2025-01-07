@@ -17,6 +17,8 @@ export async function generateMetadata({
   try {
     const roomRes = await getRoom(params.id)()
 
+    console.log('###', roomRes)
+
     const roomPublic = toRoomPublic(roomRes.data)
     const roomURL = `${websiteURL}${`/r/${roomPublic.id}`}`
     const roomTitle = `${roomPublic.name} — isling`
@@ -53,7 +55,11 @@ export default async function RoomLayout(
   const { children, params, playlist } = props
 
   try {
+    console.log('###', params.id)
     const roomRes = await getRoom(params.id)()
+
+    console.log('###', roomRes)
+
     const room = roomRes.data
 
     return (

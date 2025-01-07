@@ -82,161 +82,161 @@ export function useRoomInfo(slug: string, shouldListenAudience = false) {
     return Object.values(userSet) as SimpleUser[]
   }, [audienceMap])
 
-  useEffect(() => console.log('audiences change', audiences), [audiences])
+  // useEffect(() => console.log('audiences change', audiences), [audiences])
 
-  // TODO: write joinRoom(), listenRoom(), getAudiences() at repository layer
-  // watch audience's list
-  useEffect(() => {
-    if (!userProfile && !guestProfile) {
-      return
-    }
+  // // TODO: write joinRoom(), listenRoom(), getAudiences() at repository layer
+  // // watch audience's list
+  // useEffect(() => {
+  //   if (!userProfile && !guestProfile) {
+  //     return
+  //   }
 
-    const userId = userProfile
-      ? String(userProfile.accountId)
-      : guestProfile?.guestId || ''
+  //   const userId = userProfile
+  //     ? String(userProfile.accountId)
+  //     : guestProfile?.guestId || ''
 
-    const { joinRoom, leaveRoom } = joinRoomFactory(userId, roomUID)
+  //   const { joinRoom, leaveRoom } = joinRoomFactory(userId, roomUID)
 
-    interface SUser {
-      id: string
-      firstName: string
-      lastName?: string
-      avatarUrl?: string
-    }
+  //   interface SUser {
+  //     id: string
+  //     firstName: string
+  //     lastName?: string
+  //     avatarUrl?: string
+  //   }
 
-    interface QueryResult {
-      id: string
-      users: SUser[]
-    }
+  //   interface QueryResult {
+  //     id: string
+  //     users: SUser[]
+  //   }
 
-    const convQRUtoSimpUser = (qru: SUser): SimpleUser => ({
-      id: qru.id,
-      firstName: qru.firstName,
-      lastName: qru.lastName,
-      avatarUrl: qru.avatarUrl,
-    })
+  //   const convQRUtoSimpUser = (qru: SUser): SimpleUser => ({
+  //     id: qru.id,
+  //     firstName: qru.firstName,
+  //     lastName: qru.lastName,
+  //     avatarUrl: qru.avatarUrl,
+  //   })
 
-    const liveCallback = (
-      data: LiveQueryResponse<Record<string, QueryResult | string>>
-    ) => {
-      console.debug('audience live data', data)
+  //   const liveCallback = (
+  //     data: LiveQueryResponse<Record<string, QueryResult | string>>
+  //   ) => {
+  //     console.debug('audience live data', data)
 
-      switch (data.action) {
-        case 'CREATE':
-          const newRow = data.result as unknown as QueryResult
+  //     switch (data.action) {
+  //       case 'CREATE':
+  //         const newRow = data.result as unknown as QueryResult
 
-          if (newRow.users.length === 0) {
-            return
-          }
+  //         if (newRow.users.length === 0) {
+  //           return
+  //         }
 
-          setAudienceMap((val) => {
-            const newVal = { ...val }
+  //         setAudienceMap((val) => {
+  //           const newVal = { ...val }
 
-            newVal[newRow.id] = convQRUtoSimpUser(newRow.users[0])
+  //           newVal[newRow.id] = convQRUtoSimpUser(newRow.users[0])
 
-            return newVal
-          })
-          break
-        case 'DELETE':
-          setAudienceMap((val) => {
-            const newVal = { ...val }
-            delete newVal[data.result as unknown as string]
+  //           return newVal
+  //         })
+  //         break
+  //       case 'DELETE':
+  //         setAudienceMap((val) => {
+  //           const newVal = { ...val }
+  //           delete newVal[data.result as unknown as string]
 
-            return newVal
-          })
-          break
-        default:
-          break
-      }
-    }
+  //           return newVal
+  //         })
+  //         break
+  //       default:
+  //         break
+  //     }
+  //   }
 
-    let shouldClearListenRoomBackgroundJob = false
+  //   let shouldClearListenRoomBackgroundJob = false
 
-    let killLive = () => {
-      shouldClearListenRoomBackgroundJob = true
-    }
+  //   let killLive = () => {
+  //     shouldClearListenRoomBackgroundJob = true
+  //   }
 
-    const listenRoom = async () => {
-      if (!shouldListenAudience) {
-        return
-      }
+  //   const listenRoom = async () => {
+  //     if (!shouldListenAudience) {
+  //       return
+  //     }
 
-      const res = await surreal
-        .getConn()
-        .query(
-          `live select id, <-users.* as users from join where out = "media_rooms:${roomUID}"`
-        )
+  //     const res = await surreal
+  //       .getConn()
+  //       .query(
+  //         `live select id, <-users.* as users from join where out = "media_rooms:${roomUID}"`
+  //       )
 
-      const queryId = res[0].result as string
+  //     const queryId = res[0].result as string
 
-      await surreal.getConn().listenLive(queryId, liveCallback)
+  //     await surreal.getConn().listenLive(queryId, liveCallback)
 
-      killLive = () => {
-        surreal
-          .getConn()
-          .kill(queryId)
-          .then(() => console.log('kill live query', queryId))
-      }
+  //     killLive = () => {
+  //       surreal
+  //         .getConn()
+  //         .kill(queryId)
+  //         .then(() => console.log('kill live query', queryId))
+  //     }
 
-      if (shouldClearListenRoomBackgroundJob) {
-        killLive()
-      }
-    }
+  //     if (shouldClearListenRoomBackgroundJob) {
+  //       killLive()
+  //     }
+  //   }
 
-    const getAudiences = async () => {
-      if (!shouldListenAudience) {
-        return
-      }
+  //   const getAudiences = async () => {
+  //     if (!shouldListenAudience) {
+  //       return
+  //     }
 
-      const res = await surreal
-        .getConn()
-        .query(
-          `select id, <-users.* as users from join where out = "media_rooms:${roomUID}" and time::now() - time.pinged < 2m`
-        )
+  //     const res = await surreal
+  //       .getConn()
+  //       .query(
+  //         `select id, <-users.* as users from join where out = "media_rooms:${roomUID}" and time::now() - time.pinged < 2m`
+  //       )
 
-      if (res[0] && Array.isArray(res[0].result)) {
-        const audienceMapAtNow = res[0].result
-          .map((qr) => qr as unknown as QueryResult)
-          .reduce((pv, v) => {
-            if (v.users.length === 0) {
-              return pv
-            }
+  //     if (res[0] && Array.isArray(res[0].result)) {
+  //       const audienceMapAtNow = res[0].result
+  //         .map((qr) => qr as unknown as QueryResult)
+  //         .reduce((pv, v) => {
+  //           if (v.users.length === 0) {
+  //             return pv
+  //           }
 
-            console.debug('list audience data', v.users[0])
+  //           console.debug('list audience data', v.users[0])
 
-            return {
-              ...pv,
-              [v.id]: convQRUtoSimpUser(v.users[0]),
-            }
-          }, {})
+  //           return {
+  //             ...pv,
+  //             [v.id]: convQRUtoSimpUser(v.users[0]),
+  //           }
+  //         }, {})
 
-        setAudienceMap(audienceMapAtNow)
-      }
-    }
+  //       setAudienceMap(audienceMapAtNow)
+  //     }
+  //   }
 
-    surreal
-      .waitConnected()
-      .then(() => joinRoom())
-      .then(() => listenRoom())
-      .then(() => getAudiences())
+  //   surreal
+  //     .waitConnected()
+  //     .then(() => joinRoom())
+  //     .then(() => listenRoom())
+  //     .then(() => getAudiences())
 
-    return () => {
-      leaveRoom()
-      killLive()
-    }
-  }, [
-    roomUID,
-    shouldListenAudience,
-    userProfile,
-    surrealReconnectSignal,
-    guestProfile,
-  ])
+  //   return () => {
+  //     leaveRoom()
+  //     killLive()
+  //   }
+  // }, [
+  //   roomUID,
+  //   shouldListenAudience,
+  //   userProfile,
+  //   surrealReconnectSignal,
+  //   guestProfile,
+  // ])
 
-  useEffect(() => {
-    surreal.event.on('reconnected', () => {
-      setSurrealReconnectSignal((val) => val + 1)
-    })
-  }, [])
+  // useEffect(() => {
+  //   surreal.event.on('reconnected', () => {
+  //     setSurrealReconnectSignal((val) => val + 1)
+  //   })
+  // }, [])
 
   return {
     room: roomRes?.data,
